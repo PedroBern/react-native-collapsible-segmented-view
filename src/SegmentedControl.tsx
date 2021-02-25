@@ -1,7 +1,7 @@
 import Control, {
   SegmentedControlProps,
   NativeSegmentedControlIOSChangeEvent,
-} from '@react-native-segmented-control/segmented-control'
+} from '@react-native-community/segmented-control'
 import React from 'react'
 import { NativeSyntheticEvent, StyleSheet, View, ViewStyle } from 'react-native'
 
