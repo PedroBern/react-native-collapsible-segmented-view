@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.0.2...v1.0.3) (2021-02-25)
+
+
+### Bug Fixes
+
+* increase inactive opacity label + transform text to upper case ([52fea89](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/52fea894d66bf223e6ebde9c2aaece5bf90f81cf))
+
 ## [1.0.2](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.0.1...v1.0.2) (2021-02-25)
 
 
