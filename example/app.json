@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "React Native Collapsible Segmented View Demos",
+    "description": "Demonstrates the various capabilities of react-native-collapsible-segmented-view: https://github.com/pedrobern/react-native-collapsible-segmented-view",
+    "slug": "react-native-collapsible-segmented-view-demos",
+    "privacy": "public",
+    "version": "1.0.0",
+    "primaryColor": "#2196f3",
+    "icon": "assets/icon.png",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  }
+}
