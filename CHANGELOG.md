@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.0.1...v1.0.2) (2021-02-25)
+
+
+### Bug Fixes
+
+* use segmented control from expo ([a9cdc10](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/a9cdc10e44bf7a2528723d772078f8a930d6aff5))
+
 ## [1.0.1](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.0.0...v1.0.1) (2021-02-25)
 
 
