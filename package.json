@@ -71,7 +71,8 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "@react-native-segmented-control/segmented-control": "~2.0.0"
   },
   "husky": {
     "hooks": {
