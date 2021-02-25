@@ -48,7 +48,7 @@ The [react-native-tab-view](https://github.com/satya164/react-native-tab-view) e
 
 # Features
 
-- Implements [SegmentdControl](https://developer.apple.com/design/human-interface-guidelines/ios/controls/segmented-controls/) and [Fixed Material Tab Bar](https://material.io/components/tabs)
+- Implements [SegmentedControl](https://developer.apple.com/design/human-interface-guidelines/ios/controls/segmented-controls/) and [Fixed Material Tab Bar](https://material.io/components/tabs)
 - Lazy support
 - Highly customizable
 - Fully typed with [TypeScript](https://typescriptlang.org)
