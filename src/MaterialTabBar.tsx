@@ -50,8 +50,7 @@ export const MaterialTabBar: React.FC<Props> = ({
   pressColor = 'DDDDDD',
   pressOpacity = IS_IOS ? 0.2 : 1,
   labelStyle,
-  inactiveOpacity = 0.4,
-  // ...rest
+  inactiveOpacity = 0.7,
 }) => {
   const windowWidth = useWindowDimensions().width
 
@@ -109,7 +108,7 @@ export const MaterialTabBar: React.FC<Props> = ({
                 labelStyle,
               ]}
             >
-              {label}
+              {label.toUpperCase()}
             </Animated.Text>
           </Pressable>
         )
@@ -133,11 +132,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     height: 48,
   },
   label: {
-    margin: 4,
     color: 'black',
   },
   indicator: {
