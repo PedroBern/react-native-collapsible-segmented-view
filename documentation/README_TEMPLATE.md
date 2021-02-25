@@ -109,7 +109,7 @@ const { translateY, height } = useHeaderMeasurements()
 
 If you are looking for a full-featured tab bar with swiping, scrollable tabs, dynamic rendering, snapping and diffClamp:
 
-- [react-native-collapsible-segmented-view](https://github.com/PedroBern/react-native-collapsible-segmented-view)
+- [react-native-collapsible-tab-view](https://github.com/PedroBern/react-native-collapsible-tab-view)
 
 # Contributing
 
