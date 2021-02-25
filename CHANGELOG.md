@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.0.0...v1.0.1) (2021-02-25)
+
+
+### Bug Fixes
+
+* **deps:** add segmented control as peer dep ([bd4e7c9](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/bd4e7c9740e38f9b6d998d3dc770d000ae36b506))
+
 # 1.0.0 (2021-02-25)
 
 

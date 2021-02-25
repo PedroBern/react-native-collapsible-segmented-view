@@ -1,6 +1,6 @@
 {
   "name": "react-native-collapsible-segmented-view",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Collapsible segmented view component for React Native",
   "main": "lib/commonjs/index.js",
   "react-native": "lib/module/index.js",
