@@ -59,6 +59,8 @@ Open a Terminal in the project root and run:
 
 ```sh
 yarn add react-native-collapsible-segmented-view
+
+expo install @react-native-community/segmented-control
 ```
 
 # Quick Start
