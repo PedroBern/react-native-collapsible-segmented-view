@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.1.1...v1.2.0) (2021-03-11)
+
+
+### Bug Fixes
+
+* fix min height on android ([d4a72f6](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/d4a72f6100033c8d2371965f82200f821f7016e2))
+
+
+### Features
+
+* support custom RefreshControl on FlatList ([db4ace5](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/db4ace51cec43dfb2f6e19532427c843241ffcb2))
+
 ## [1.1.1](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.1.0...v1.1.1) (2021-03-11)
 
 
