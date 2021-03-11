@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.0.3...v1.1.0) (2021-03-11)
+
+
+### Bug Fixes
+
+* add missing default control height ([71bb48d](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/71bb48d8806fc32806aa9854368b3523d3e6f4fb))
+* improve typing ([711ac0f](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/711ac0f0e6b1cc0a6ea201c87b165327005431d6))
+* use TextStyle type for label ([9c88755](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/9c88755d96f919f062fd6ae352e71e1844025026))
+
+
+### Features
+
+* add content inset on iOS ([06e0548](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/06e05486c2f3e772f11c605457107b6d662b22f2))
+* add disableFadeIn prop ([85175b6](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/85175b6734578e9be3c670152e7e25604e04d585))
+
 ## [1.0.3](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.0.2...v1.0.3) (2021-02-25)
 
 
