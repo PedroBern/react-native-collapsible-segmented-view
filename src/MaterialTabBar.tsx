@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from 'react-native'
 
-import { IS_IOS } from './helpers'
+import { CONTROL_HEIGHT, IS_IOS } from './helpers'
 import { ControlProps } from './types'
 
 export type Props = ControlProps & {
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
-    height: 48,
+    height: CONTROL_HEIGHT,
   },
   label: {
     color: 'black',

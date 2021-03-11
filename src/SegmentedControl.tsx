@@ -5,7 +5,7 @@ import Control, {
 import React from 'react'
 import { NativeSyntheticEvent, StyleSheet, View, ViewStyle } from 'react-native'
 
-import { IS_IOS } from './helpers'
+import { CONTROL_HEIGHT, IS_IOS } from './helpers'
 import { ControlProps } from './types'
 
 export type Props = ControlProps &
@@ -27,7 +27,7 @@ export type Props = ControlProps &
  * ...
  *
  * <Segmented.View
- *  control={(props) => <SegmentedControl {...props} appearence='dark' />}
+ *  control={(props) => <SegmentedControl {...props} appearance='dark' />}
  * >
  *  ...
  * ```
@@ -73,5 +73,6 @@ export const SegmentedControl: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     padding: 8,
+    height: CONTROL_HEIGHT,
   },
 })

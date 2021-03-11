@@ -13,7 +13,7 @@ import { SegmentReactElement } from './Segment'
 import { SegmentContext } from './SegmentContext'
 import { SegmentedControl } from './SegmentedControl'
 import { SegmentedViewContext } from './SegmentedViewContext'
-import { IS_IOS, extractLabels, spring } from './helpers'
+import { IS_IOS, extractLabels, spring, CONTROL_HEIGHT } from './helpers'
 import { ScrollRef, ControlProps, SetIndex } from './types'
 
 export type Props = {
@@ -53,7 +53,7 @@ export const SegmentedView: React.FC<Props> = ({
   initialIndex = 0,
   animatedValue = new Animated.Value(0),
   headerHeight,
-  controlHeight = 0,
+  controlHeight = CONTROL_HEIGHT,
   containerHeight = 0,
   children,
   header: HeaderComponent,
