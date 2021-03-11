@@ -23,8 +23,10 @@ export type Props = {
   controlHeight?: number
   containerHeight?: number
   children: SegmentReactElement[]
-  header?: () => React.ReactElement<any>
-  control?: (props: ControlProps) => React.ReactElement<any>
+  header?: React.FC | (() => React.ReactElement<any>)
+  control?:
+    | React.FC<Partial<ControlProps>>
+    | ((props: Partial<ControlProps>) => React.ReactElement<any>)
   lazy?: boolean
   containerStyle?: ViewStyle
   topStyle?: ViewStyle
