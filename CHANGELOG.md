@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.1.0...v1.1.1) (2021-03-11)
+
+
+### Bug Fixes
+
+* improve control component type ([533f7ed](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/533f7ed3d3a1facb0f5d6305471aed15577992d7))
+
 # [1.1.0](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.0.3...v1.1.0) (2021-03-11)
 
 
