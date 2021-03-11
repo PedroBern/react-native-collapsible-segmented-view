@@ -4,6 +4,7 @@ import { Animated } from 'react-native'
 import { ScrollRef, SetIndex } from './types'
 
 export type SegmentedViewContextType = {
+  contentInset: number
   headerHeight: number
   controlHeight: number
   containerHeight: number
