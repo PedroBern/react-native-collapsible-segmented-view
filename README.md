@@ -167,7 +167,7 @@ const Example = () => {
 |containerHeight|`number \| undefined`|`0`|
 |containerStyle|`ViewStyle \| undefined`||
 |control|`(props: ControlProps) => React.ReactElement`|`IS_IOS ? SegmentedControl : MaterialTabBar`|
-|controlHeight|`number \| undefined`|`0`|
+|controlHeight|`number \| undefined`|`48`|
 |header|`() => React.ReactElement`||
 |headerHeight|`number \| undefined`||
 |initialIndex|`number \| undefined`|`0`|
@@ -220,7 +220,7 @@ import {
 ...
 
 <Segmented.View
-  control={(props) => <SegmentedControl {...props} appearence='dark' />}
+  control={(props) => <SegmentedControl {...props} appearance='dark' />}
 >
   ...
 ```
@@ -258,9 +258,9 @@ import {
 |name|type|default|
 |:----:|:----:|:----:|
 |containerStyle|`ViewStyle \| undefined`||
-|inactiveOpacity|`number \| undefined`|`0.4`|
+|inactiveOpacity|`number \| undefined`|`0.7`|
 |indicatorStyle|`ViewStyle \| undefined`||
-|labelStyle|`ViewStyle \| undefined`||
+|labelStyle|`TextStyle \| undefined`||
 |pressColor|`string \| undefined`|`DDDDDD`|
 |pressOpacity|`number \| undefined`|`IS_IOS ? 0.2 : 1`|
 |tabStyle|`ViewStyle \| undefined`||
