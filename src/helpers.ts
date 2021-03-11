@@ -30,3 +30,5 @@ export const extractLabels = (
   })
   return labels
 }
+
+export const CONTROL_HEIGHT = 48

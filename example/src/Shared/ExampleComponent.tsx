@@ -7,12 +7,13 @@ import {
 import Albums from './Albums'
 import Article from './Article'
 import Contacts from './Contacts'
+import { HEADER_HEIGHT } from './Header'
 
 type Props = Partial<SegmentedViewProps>
 
 export const ExampleComponent: React.FC<Props> = (props) => {
   return (
-    <Segmented.View {...props}>
+    <Segmented.View {...props} headerHeight={HEADER_HEIGHT}>
       <Segmented.Segment label="Article" component={Article} />
       <Segmented.Segment label="Albums" component={Albums} />
       <Segmented.Segment label="Contacts" component={Contacts} />

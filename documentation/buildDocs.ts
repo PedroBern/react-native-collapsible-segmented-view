@@ -81,6 +81,12 @@ const overrideProps: OverrideProps = {
       },
       defaultValue: { value: 'IS_IOS ? SegmentedControl : MaterialTabBar' },
     },
+    controlHeight: {
+      type: {
+        name: 'number | undefined',
+      },
+      defaultValue: { value: '48' },
+    },
     header: {
       type: {
         name: '() => React.ReactElement',

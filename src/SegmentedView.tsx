@@ -13,7 +13,7 @@ import { SegmentReactElement } from './Segment'
 import { SegmentContext } from './SegmentContext'
 import { SegmentedControl } from './SegmentedControl'
 import { SegmentedViewContext } from './SegmentedViewContext'
-import { IS_IOS, extractLabels, spring } from './helpers'
+import { IS_IOS, extractLabels, spring, CONTROL_HEIGHT } from './helpers'
 import { ScrollRef, ControlProps, SetIndex } from './types'
 
 export type Props = {
@@ -23,11 +23,14 @@ export type Props = {
   controlHeight?: number
   containerHeight?: number
   children: SegmentReactElement[]
-  header?: () => React.ReactElement<any>
-  control?: (props: ControlProps) => React.ReactElement<any>
+  header?: React.FC | (() => React.ReactElement<any>)
+  control?:
+    | React.FC<Partial<ControlProps>>
+    | ((props: Partial<ControlProps>) => React.ReactElement<any>)
   lazy?: boolean
   containerStyle?: ViewStyle
   topStyle?: ViewStyle
+  disableFadeIn?: boolean
 }
 
 /**
@@ -51,7 +54,7 @@ export const SegmentedView: React.FC<Props> = ({
   initialIndex = 0,
   animatedValue = new Animated.Value(0),
   headerHeight,
-  controlHeight = 0,
+  controlHeight = CONTROL_HEIGHT,
   containerHeight = 0,
   children,
   header: HeaderComponent,
@@ -59,6 +62,7 @@ export const SegmentedView: React.FC<Props> = ({
   lazy = false,
   containerStyle,
   topStyle,
+  disableFadeIn = false,
 }) => {
   const [labels] = React.useState(extractLabels(children))
   const refs = React.useRef<undefined[] | ScrollRef[]>(
@@ -234,9 +238,14 @@ export const SegmentedView: React.FC<Props> = ({
           visibility[nextIndex].zIndex.setValue(2)
           visibility[currentIndex].opacity.setValue(0)
           visibility[currentIndex].zIndex.setValue(0)
-          spring(visibility[nextIndex].opacity, 1).start(() => {
+          if (disableFadeIn) {
+            visibility[nextIndex].opacity.setValue(1)
             visibility[nextIndex].zIndex.setValue(1)
-          })
+          } else {
+            spring(visibility[nextIndex].opacity, 1).start(() => {
+              visibility[nextIndex].zIndex.setValue(1)
+            })
+          }
 
           // update the mutable objects
           trackIndex.current = nextIndex
@@ -248,7 +257,7 @@ export const SegmentedView: React.FC<Props> = ({
         }
       }
     },
-    [floatIndex, layoutHeights.header, index, visibility]
+    [floatIndex, layoutHeights.header, index, visibility, disableFadeIn]
   )
 
   const setRef = React.useCallback((ref: ScrollRef, index: number) => {
