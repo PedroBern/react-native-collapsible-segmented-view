@@ -1,4 +1,5 @@
 import { useSegmentedViewContext } from './SegmentedViewContext'
+import { IS_IOS } from './helpers'
 
 type CollapsibleStyle = {
   style: { width: '100%' }
@@ -19,8 +20,10 @@ export function useCollapsibleStyle(): CollapsibleStyle {
   return {
     style: { width: '100%' },
     contentContainerStyle: {
-      minHeight: (containerHeight || 0) + headerHeight,
-      paddingTop: headerHeight + controlHeight,
+      minHeight: IS_IOS
+        ? containerHeight - controlHeight
+        : containerHeight + controlHeight,
+      paddingTop: IS_IOS ? 0 : headerHeight + controlHeight,
     },
     progressViewOffset: headerHeight + controlHeight,
   }

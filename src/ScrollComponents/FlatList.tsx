@@ -22,7 +22,7 @@ export function FlatList<T = any>({
 
   const { index } = useSegmentContext()
 
-  const { scrollY, setRef } = useSegmentedViewContext()
+  const { scrollY, setRef, contentInset } = useSegmentedViewContext()
 
   React.useEffect(() => {
     // @ts-ignore
@@ -44,6 +44,12 @@ export function FlatList<T = any>({
         { useNativeDriver: true }
       )}
       scrollEventThrottle={16}
+      contentInset={{ top: contentInset }}
+      contentOffset={{
+        y: -contentInset,
+        x: 0,
+      }}
+      automaticallyAdjustContentInsets={false}
     />
   )
 }

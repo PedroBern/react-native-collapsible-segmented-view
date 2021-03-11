@@ -11,6 +11,8 @@ type ScrollableList = {
   scrollToOffset: (params: { offset: number; animated?: boolean }) => void
 }
 
+export type ScrollElement = ScrollableView | ScrollableList
+
 export type ScrollRef =
   | MutableRefObject<ScrollableView>
   | MutableRefObject<ScrollableList>

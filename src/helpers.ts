@@ -1,6 +1,8 @@
 import { Children } from 'react'
 import { Animated, Platform } from 'react-native'
 
+import { ScrollElement } from './types'
+
 export const IS_IOS = Platform.OS === 'ios'
 
 export const spring = (
@@ -32,3 +34,22 @@ export const extractLabels = (
 }
 
 export const CONTROL_HEIGHT = 48
+
+export const scrollTo = (
+  ref: ScrollElement,
+  to: number,
+  animated: boolean = false
+) => {
+  if (ref.scrollToOffset) {
+    ref.scrollToOffset({
+      offset: to,
+      animated,
+    })
+  } else {
+    ref?.scrollTo({
+      x: 0,
+      y: to,
+      animated,
+    })
+  }
+}

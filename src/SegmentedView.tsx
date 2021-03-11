@@ -13,7 +13,13 @@ import { SegmentReactElement } from './Segment'
 import { SegmentContext } from './SegmentContext'
 import { SegmentedControl } from './SegmentedControl'
 import { SegmentedViewContext } from './SegmentedViewContext'
-import { IS_IOS, extractLabels, spring, CONTROL_HEIGHT } from './helpers'
+import {
+  IS_IOS,
+  extractLabels,
+  spring,
+  CONTROL_HEIGHT,
+  scrollTo,
+} from './helpers'
 import { ScrollRef, ControlProps, SetIndex } from './types'
 
 export type Props = {
@@ -52,7 +58,7 @@ export type Props = {
  */
 export const SegmentedView: React.FC<Props> = ({
   initialIndex = 0,
-  animatedValue = new Animated.Value(0),
+  animatedValue,
   headerHeight,
   controlHeight = CONTROL_HEIGHT,
   containerHeight = 0,
@@ -68,7 +74,6 @@ export const SegmentedView: React.FC<Props> = ({
   const refs = React.useRef<undefined[] | ScrollRef[]>(
     labels.map(() => undefined)
   )
-  const [scrollY] = React.useState(animatedValue)
 
   /**
    * keep all heights on a single object insted of 3. This helps
@@ -78,6 +83,7 @@ export const SegmentedView: React.FC<Props> = ({
     header: headerHeight || 0,
     control: controlHeight,
     container: containerHeight,
+    contentInset: IS_IOS ? (headerHeight || 0) + controlHeight : 0,
   })
   const trackHeaderHeight = React.useRef(layoutHeights.header)
   const trackControlHeight = React.useRef(layoutHeights.control)
@@ -96,13 +102,19 @@ export const SegmentedView: React.FC<Props> = ({
   const [floatIndex] = React.useState(new Animated.Value(initialIndex))
   const trackIndex = React.useRef(initialIndex)
   const prevIndex = React.useRef(initialIndex)
-  const offsets = React.useRef(labels.map(() => 0))
+  const offsets = React.useRef(labels.map(() => -layoutHeights.contentInset))
+  const [scrollY] = React.useState(
+    animatedValue || new Animated.Value(-layoutHeights.contentInset)
+  )
 
   const translateY = React.useRef(
     scrollY.interpolate({
-      inputRange: [0, layoutHeights.header],
+      inputRange: [
+        0 - layoutHeights.contentInset,
+        layoutHeights.header - layoutHeights.contentInset,
+      ],
       outputRange: [0, -layoutHeights.header],
-      extrapolateRight: 'clamp',
+      extrapolate: 'clamp',
     })
   )
 
@@ -116,13 +128,30 @@ export const SegmentedView: React.FC<Props> = ({
   const maybeTriggerRerenderAfterOnLayout = React.useCallback(() => {
     // layout calls = hedaer + control + container
     if (onLayoutCalls.current >= 3) {
+      const contentInset = IS_IOS
+        ? trackHeaderHeight.current + trackControlHeight.current
+        : 0
+
       // update translateY if the header height has changed
       if (trackHeaderHeight.current !== layoutHeights.header) {
         translateY.current = scrollY.interpolate({
-          inputRange: [0, trackHeaderHeight.current],
+          inputRange: [
+            0 - contentInset,
+            trackHeaderHeight.current - contentInset,
+          ],
           outputRange: [0, -trackHeaderHeight.current],
-          extrapolateRight: 'clamp',
+          extrapolate: 'clamp',
         })
+      }
+
+      // update offsets and scrollY
+      // to get correct value after first render
+      if (
+        onLayoutCalls.current === 3 &&
+        contentInset !== layoutHeights.contentInset
+      ) {
+        offsets.current = offsets.current.map(() => -contentInset)
+        scrollY.setValue(-contentInset)
       }
 
       // update the layoutHeights
@@ -135,6 +164,7 @@ export const SegmentedView: React.FC<Props> = ({
           header: trackHeaderHeight.current,
           control: trackControlHeight.current,
           container: trackContainerHeight.current,
+          contentInset,
         })
       }
 
@@ -143,6 +173,7 @@ export const SegmentedView: React.FC<Props> = ({
     }
   }, [
     layoutHeights.container,
+    layoutHeights.contentInset,
     layoutHeights.control,
     layoutHeights.header,
     scenesOpacity,
@@ -218,19 +249,17 @@ export const SegmentedView: React.FC<Props> = ({
 
         // scroll to the correct offset
         if (nextPosition !== null && nextRef) {
-          if (nextRef.scrollToOffset) {
-            nextRef.scrollToOffset({
-              animated: false,
-              offset: nextPosition,
-            })
-          } else {
-            nextRef.scrollTo({
-              x: 0,
-              y: nextPosition,
-              animated: false,
-            })
-          }
+          scrollTo(nextRef, nextPosition)
           offsets.current[nextIndex] = nextPosition
+        }
+
+        // scroll to the top if is refrehing the current tab on iOS
+        // before changing tabs
+        const isRefreshingOnIOS =
+          IS_IOS && currOffset < -layoutHeights.contentInset
+        if (isRefreshingOnIOS) {
+          const ref = refs.current[currentIndex]?.current
+          ref && scrollTo(ref, -layoutHeights.contentInset)
         }
 
         if (!_syncOnly) {
@@ -257,7 +286,14 @@ export const SegmentedView: React.FC<Props> = ({
         }
       }
     },
-    [floatIndex, layoutHeights.header, index, visibility, disableFadeIn]
+    [
+      layoutHeights.header,
+      layoutHeights.contentInset,
+      visibility,
+      disableFadeIn,
+      index,
+      floatIndex,
+    ]
   )
 
   const setRef = React.useCallback((ref: ScrollRef, index: number) => {
@@ -267,6 +303,7 @@ export const SegmentedView: React.FC<Props> = ({
   return (
     <SegmentedViewContext.Provider
       value={{
+        contentInset: layoutHeights.contentInset,
         headerHeight: layoutHeights.header,
         controlHeight: layoutHeights.control,
         containerHeight: layoutHeights.container,

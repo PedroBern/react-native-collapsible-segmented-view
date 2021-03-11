@@ -29,7 +29,7 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
 
   const { index } = useSegmentContext()
 
-  const { scrollY, setRef } = useSegmentedViewContext()
+  const { scrollY, setRef, contentInset } = useSegmentedViewContext()
 
   React.useEffect(() => {
     // @ts-ignore
@@ -44,6 +44,7 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
       ref={ref}
       bouncesZoom={false}
       style={[_style, style]}
+      scrollEventThrottle={16}
       contentContainerStyle={[_contentContainerStyle, contentContainerStyle]}
       onScroll={Animated.event(
         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -56,6 +57,12 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
           progressViewOffset,
         })
       }
+      contentInset={{ top: contentInset }}
+      contentOffset={{
+        y: -contentInset,
+        x: 0,
+      }}
+      automaticallyAdjustContentInsets={false}
     >
       {children}
     </Animated.ScrollView>

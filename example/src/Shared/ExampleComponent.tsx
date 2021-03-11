@@ -13,7 +13,7 @@ type Props = Partial<SegmentedViewProps>
 
 export const ExampleComponent: React.FC<Props> = (props) => {
   return (
-    <Segmented.View {...props} headerHeight={HEADER_HEIGHT}>
+    <Segmented.View headerHeight={HEADER_HEIGHT} {...props}>
       <Segmented.Segment label="Article" component={Article} />
       <Segmented.Segment label="Albums" component={Albums} />
       <Segmented.Segment label="Contacts" component={Contacts} />
