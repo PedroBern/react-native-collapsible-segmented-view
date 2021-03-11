@@ -53,8 +53,8 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
       refreshControl={
         refreshControl &&
         React.cloneElement(refreshControl, {
-          ...refreshControl.props,
           progressViewOffset,
+          ...refreshControl.props,
         })
       }
       contentInset={{ top: contentInset }}
