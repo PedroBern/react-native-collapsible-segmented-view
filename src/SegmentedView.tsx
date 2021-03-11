@@ -20,7 +20,7 @@ import {
   CONTROL_HEIGHT,
   scrollTo,
 } from './helpers'
-import { ScrollRef, ControlProps, SetIndex } from './types'
+import { ControlProps, ScrollRef, SetIndex } from './types'
 
 export type Props = {
   animatedValue?: Animated.Value
@@ -31,8 +31,8 @@ export type Props = {
   children: SegmentReactElement[]
   header?: React.FC | (() => React.ReactElement<any>)
   control?:
-    | React.FC<Partial<ControlProps>>
-    | ((props: Partial<ControlProps>) => React.ReactElement<any>)
+    | React.FC<ControlProps>
+    | ((props: ControlProps) => React.ReactElement<any>)
   lazy?: boolean
   containerStyle?: ViewStyle
   topStyle?: ViewStyle
