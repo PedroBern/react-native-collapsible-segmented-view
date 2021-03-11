@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
 import Constants from 'expo-constants'
-import * as React from 'react'
+import React from 'react'
 import {
   Platform,
   ScrollView,
