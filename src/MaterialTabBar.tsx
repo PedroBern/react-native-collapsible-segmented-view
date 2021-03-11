@@ -3,6 +3,7 @@ import {
   Animated,
   Pressable,
   StyleSheet,
+  TextStyle,
   useWindowDimensions,
   View,
   ViewStyle,
@@ -17,7 +18,7 @@ export type Props = ControlProps & {
   indicatorStyle?: ViewStyle
   pressColor?: string
   pressOpacity?: number
-  labelStyle?: ViewStyle
+  labelStyle?: TextStyle
   inactiveOpacity?: number
 }
 
