@@ -168,6 +168,7 @@ const Example = () => {
 |containerStyle|`ViewStyle \| undefined`||
 |control|`(props: ControlProps) => React.ReactElement`|`IS_IOS ? SegmentedControl : MaterialTabBar`|
 |controlHeight|`number \| undefined`|`48`|
+|disableFadeIn|`boolean \| undefined`|`false`|
 |header|`() => React.ReactElement`||
 |headerHeight|`number \| undefined`||
 |initialIndex|`number \| undefined`|`0`|

@@ -15,6 +15,7 @@ import {
 import AnimatedHeader from './AnimatedHeader'
 import Default from './Default'
 import Lazy from './Lazy'
+import NoFadeIn from './NoFadeIn'
 import QuickStartDemo from './QuickStartDemo'
 import { ExampleComponentType } from './types'
 
@@ -23,6 +24,7 @@ const EXAMPLE_COMPONENTS: ExampleComponentType[] = [
   QuickStartDemo,
   Lazy,
   AnimatedHeader,
+  NoFadeIn,
 ]
 
 const ExampleList: React.FC<object> = () => {

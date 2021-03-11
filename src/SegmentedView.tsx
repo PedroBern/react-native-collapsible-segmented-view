@@ -30,6 +30,7 @@ export type Props = {
   lazy?: boolean
   containerStyle?: ViewStyle
   topStyle?: ViewStyle
+  disableFadeIn?: boolean
 }
 
 /**
@@ -61,6 +62,7 @@ export const SegmentedView: React.FC<Props> = ({
   lazy = false,
   containerStyle,
   topStyle,
+  disableFadeIn = false,
 }) => {
   const [labels] = React.useState(extractLabels(children))
   const refs = React.useRef<undefined[] | ScrollRef[]>(
@@ -236,9 +238,14 @@ export const SegmentedView: React.FC<Props> = ({
           visibility[nextIndex].zIndex.setValue(2)
           visibility[currentIndex].opacity.setValue(0)
           visibility[currentIndex].zIndex.setValue(0)
-          spring(visibility[nextIndex].opacity, 1).start(() => {
+          if (disableFadeIn) {
+            visibility[nextIndex].opacity.setValue(1)
             visibility[nextIndex].zIndex.setValue(1)
-          })
+          } else {
+            spring(visibility[nextIndex].opacity, 1).start(() => {
+              visibility[nextIndex].zIndex.setValue(1)
+            })
+          }
 
           // update the mutable objects
           trackIndex.current = nextIndex
@@ -250,7 +257,7 @@ export const SegmentedView: React.FC<Props> = ({
         }
       }
     },
-    [floatIndex, layoutHeights.header, index, visibility]
+    [floatIndex, layoutHeights.header, index, visibility, disableFadeIn]
   )
 
   const setRef = React.useCallback((ref: ScrollRef, index: number) => {
