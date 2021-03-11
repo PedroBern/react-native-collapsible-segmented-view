@@ -22,7 +22,7 @@ export function useCollapsibleStyle(): CollapsibleStyle {
     contentContainerStyle: {
       minHeight: IS_IOS
         ? containerHeight - controlHeight
-        : containerHeight + controlHeight,
+        : containerHeight + headerHeight,
       paddingTop: IS_IOS ? 0 : headerHeight + controlHeight,
     },
     progressViewOffset: headerHeight + controlHeight,

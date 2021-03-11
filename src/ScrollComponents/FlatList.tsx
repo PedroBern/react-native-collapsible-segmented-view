@@ -11,6 +11,7 @@ import { useCollapsibleStyle } from '../useCollapsibleStyle'
 export function FlatList<T = any>({
   contentContainerStyle,
   style,
+  refreshControl,
   ...rest
 }: FlatListProps<T>): React.ReactElement {
   const ref = React.useRef<RNFlatList>()
@@ -50,6 +51,13 @@ export function FlatList<T = any>({
         x: 0,
       }}
       automaticallyAdjustContentInsets={false}
+      refreshControl={
+        refreshControl &&
+        React.cloneElement(refreshControl, {
+          progressViewOffset,
+          ...refreshControl.props,
+        })
+      }
     />
   )
 }
