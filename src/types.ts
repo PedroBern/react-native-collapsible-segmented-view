@@ -1,5 +1,8 @@
 import { MutableRefObject } from 'react'
 import { Animated } from 'react-native'
+import { Route as RNTVRoute } from 'react-native-tab-view'
+
+export type Route = Omit<RNTVRoute, 'key'> & { id: string }
 
 export type ScrollableView = {
   scrollTo: (params: { x?: number; y?: number; animated?: boolean }) => void
@@ -21,7 +24,7 @@ export type ControlProps = {
   initialIndex: number
   position: Animated.AnimatedAddition
   onTabPress: (nextIndex: number) => void
-  labels: string[]
+  routes: Route[]
   index: Animated.Value
 }
 

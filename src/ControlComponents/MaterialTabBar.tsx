@@ -1,14 +1,14 @@
 import React from 'react'
-import { useWindowDimensions } from 'react-native'
+import { useWindowDimensions, StyleSheet } from 'react-native'
 import {
   NavigationState,
   TabBar,
   TabBarProps,
   SceneRendererProps,
-  Route,
 } from 'react-native-tab-view'
 
-import { ControlProps } from './types'
+import { CONTROL_HEIGHT } from '../helpers'
+import { ControlProps } from '../types'
 
 export type Props = ControlProps &
   Omit<
@@ -33,9 +33,7 @@ export type Props = ControlProps &
       | 'getTestID'
       | 'renderIndicator'
     >
-  > & {
-    routes?: Route[]
-  }
+  >
 
 /**
  * Default android control. Props are passed to the original [TabBar](https://github.com/satya164/react-native-tab-view#tabbar).
@@ -56,14 +54,9 @@ export type Props = ControlProps &
  *  ...
  * ```
  *
- * You can optionally pass custom routes in the same format of [the routes in the navigationState](https://github.com/satya164/react-native-tab-view#navigationstate-required):
+ * Rendering icons:
  *
  * ```tsx
- * const routes = [
- *    { key: 'A', title: 'A', icon: 'home' }
- * ]
- *
- *
  * const renderIcon={({ route, focused, color }) => (
  *  <Icon
  *    name={route.icon}
@@ -74,30 +67,32 @@ export type Props = ControlProps &
  *
  * <Segmented.View
  *  control={(props) => (
- *    <MaterialTabBar routes={routes} renderIcon={renderIcon} {...props} />
+ *    <MaterialTabBar renderIcon={renderIcon} {...props} />
  *  )}
+ *  ...
  * >
+ *    <Segmented.Segment key='article' title='Article' icon='home' component={Article} />
  *  ...
  * ```
  *
  */
 export const MaterialTabBar: React.FC<Props> = ({
   onTabPress,
-  labels,
   position,
   initialIndex,
   index,
   routes,
+  style,
   ...rest
 }) => {
   const windowWidth = useWindowDimensions().width
 
   const _onTabPress = React.useCallback(
-    (label: string) => {
-      const index = labels.findIndex((l) => l === label)
+    (id: string) => {
+      const index = routes.findIndex((r) => id === r.id)
       onTabPress(index)
     },
-    [onTabPress, labels]
+    [onTabPress, routes]
   )
 
   const sceneRendererProps = React.useMemo<SceneRendererProps>(() => {
@@ -111,15 +106,25 @@ export const MaterialTabBar: React.FC<Props> = ({
   const navigationState = React.useMemo<NavigationState<any>>(() => {
     return {
       index: initialIndex,
-      routes: routes ? routes : labels.map((l) => ({ key: l, title: l })),
+      routes: routes.map((route) => ({
+        ...route,
+        key: route.id,
+      })),
     }
-  }, [initialIndex, labels, routes])
+  }, [initialIndex, routes])
 
   return (
     <TabBar
       {...sceneRendererProps}
       navigationState={navigationState}
+      style={[styles.container, style]}
       {...rest}
     />
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    height: CONTROL_HEIGHT,
+  },
+})

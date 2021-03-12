@@ -4,9 +4,9 @@ import { Animated, StyleSheet } from 'react-native'
 import { useSegmentContext } from './SegmentContext'
 import { useSegmentedViewContext } from './SegmentedViewContext'
 import { spring } from './helpers'
+import { Route } from './types'
 
-type Props = {
-  label: string
+type Props = Route & {
   component:
     | (() => React.ReactElement)
     | React.FC<any>
@@ -20,9 +20,9 @@ export type SegmentReactElement = React.ReactElement<Props>
  *
  * ```tsx
  * <Segmented.View ...>
- *  <Segmented.Segment label="A" component={ScreenA} />
- *  <Segmented.Segment label="B" component={ScreenB} />
- *  <Segmented.Segment label="C" component={ScreenC} />
+ *  <Segmented.Segment id="A" component={ScreenA} />
+ *  <Segmented.Segment id="B" component={ScreenB} />
+ *  <Segmented.Segment id="C" component={ScreenC} />
  * </Segmented.Container>
  * ```
  */

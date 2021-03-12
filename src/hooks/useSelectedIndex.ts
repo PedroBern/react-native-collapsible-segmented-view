@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { useSegmentContext } from './SegmentContext'
-import { useSegmentedViewContext } from './SegmentedViewContext'
+import { useSegmentContext } from '../SegmentContext'
+import { useSegmentedViewContext } from '../SegmentedViewContext'
 
 /**
  *

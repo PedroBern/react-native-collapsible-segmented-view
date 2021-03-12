@@ -1,6 +1,6 @@
 import { Animated } from 'react-native'
 
-import { useSegmentedViewContext } from './SegmentedViewContext'
+import { useSegmentedViewContext } from '../SegmentedViewContext'
 
 type HeaderMeasurements = {
   /**

@@ -12,17 +12,17 @@ import ViewPager, {
   PageScrollStateChangedNativeEvent,
 } from 'react-native-pager-view'
 
-import { MaterialTabBar } from './MaterialTabBar'
+import { MaterialTabBar } from './ControlComponents/MaterialTabBar'
+import { SegmentedControl } from './ControlComponents/SegmentedControl'
 import { SegmentReactElement } from './Segment'
 import { SegmentContext } from './SegmentContext'
-import { SegmentedControl } from './SegmentedControl'
 import { SegmentedViewContext } from './SegmentedViewContext'
 import {
   IS_IOS,
-  extractLabels,
   spring,
   CONTROL_HEIGHT,
   scrollTo,
+  extractSegmentRouteProps,
 } from './helpers'
 import { ControlProps, ScrollRef } from './types'
 
@@ -33,8 +33,8 @@ export type Props = {
   controlHeight?: number
   containerHeight?: number
   children: SegmentReactElement[]
-  header?: React.FC | (() => React.ReactElement<any>)
-  control?:
+  renderHeader?: React.FC | (() => React.ReactElement<any>)
+  renderControl?:
     | React.FC<ControlProps>
     | ((props: ControlProps) => React.ReactElement<any>)
   lazy?: boolean
@@ -55,9 +55,9 @@ const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager)
  * const Example = () => {
  *   return (
  *     <Segmented.View hader={MyHeader}>
- *       <Segmented.Segment label="A" component={ScreenA} />
- *       <Segmented.Segment label="B" component={ScreenB} />
- *        <Segmented.Segment label="C" component={ScreenC} />
+ *       <Segmented.Segment id="A" component={ScreenA} />
+ *       <Segmented.Segment id="B" component={ScreenB} />
+ *        <Segmented.Segment id="C" component={ScreenC} />
  *     </Tabs.Container>
  *   )
  * }
@@ -70,17 +70,19 @@ export const SegmentedView: React.FC<Props> = ({
   controlHeight = CONTROL_HEIGHT,
   containerHeight = 0,
   children,
-  header: HeaderComponent,
-  control: ControlComponent = IS_IOS ? SegmentedControl : MaterialTabBar,
+  renderHeader: HeaderComponent,
+  renderControl: ControlComponent = IS_IOS ? SegmentedControl : MaterialTabBar,
   lazy = false,
   containerStyle,
   topStyle,
   keyboardDismissMode,
   swipeEnabled = true,
 }) => {
-  const [labels] = React.useState(extractLabels(children))
+  const routes = React.useMemo(() => extractSegmentRouteProps(children), [
+    children,
+  ])
   const refs = React.useRef<undefined[] | ScrollRef[]>(
-    labels.map(() => undefined)
+    routes.map(() => undefined)
   )
 
   // keep all heights on a single object insted of 3. This helps
@@ -106,7 +108,7 @@ export const SegmentedView: React.FC<Props> = ({
   const [index] = React.useState(new Animated.Value(initialIndex))
   const trackIndex = React.useRef(initialIndex)
   const prevIndex = React.useRef(initialIndex)
-  const offsets = React.useRef(labels.map(() => -layoutHeights.contentInset))
+  const offsets = React.useRef(routes.map(() => -layoutHeights.contentInset))
   const [scrollY] = React.useState(
     animatedValue || new Animated.Value(-layoutHeights.contentInset)
   )
@@ -128,7 +130,7 @@ export const SegmentedView: React.FC<Props> = ({
   )
 
   const [opacities] = React.useState(
-    labels.map((_, i) => new Animated.Value(initialIndex === i ? 1 : 0))
+    routes.map((_, i) => new Animated.Value(initialIndex === i ? 1 : 0))
   )
 
   const maybeTriggerRerenderAfterOnLayout = React.useCallback(() => {
@@ -307,7 +309,7 @@ export const SegmentedView: React.FC<Props> = ({
               if (
                 next !== trackIndex.current &&
                 next >= 0 &&
-                next < labels.length
+                next < routes.length
               ) {
                 syncScene(next)
               }
@@ -317,7 +319,7 @@ export const SegmentedView: React.FC<Props> = ({
         }
       }
     },
-    [labels.length, pagerOffset, syncScene]
+    [routes.length, pagerOffset, syncScene]
   )
 
   const onPageSelected = React.useCallback(
@@ -416,7 +418,7 @@ export const SegmentedView: React.FC<Props> = ({
               position={position}
               onTabPress={onTabPress}
               initialIndex={initialIndex}
-              labels={labels}
+              routes={routes}
             />
           </View>
         </Animated.View>

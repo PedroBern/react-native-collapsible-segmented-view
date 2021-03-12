@@ -1,5 +1,5 @@
-import { useSegmentedViewContext } from './SegmentedViewContext'
-import { IS_IOS } from './helpers'
+import { useSegmentedViewContext } from '../SegmentedViewContext'
+import { IS_IOS } from '../helpers'
 
 type CollapsibleStyle = {
   style: { width: '100%' }

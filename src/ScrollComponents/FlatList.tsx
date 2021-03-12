@@ -3,7 +3,7 @@ import { FlatList as RNFlatList, FlatListProps, Animated } from 'react-native'
 
 import { useSegmentContext } from '../SegmentContext'
 import { useSegmentedViewContext } from '../SegmentedViewContext'
-import { useCollapsibleStyle } from '../useCollapsibleStyle'
+import { useCollapsibleStyle } from '../hooks/useCollapsibleStyle'
 
 /**
  * Use like a regular flatlist.

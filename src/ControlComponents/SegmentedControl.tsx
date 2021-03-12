@@ -5,8 +5,8 @@ import Control, {
 import React from 'react'
 import { NativeSyntheticEvent, StyleSheet, View, ViewStyle } from 'react-native'
 
-import { CONTROL_HEIGHT, IS_IOS } from './helpers'
-import { ControlProps } from './types'
+import { CONTROL_HEIGHT, IS_IOS } from '../helpers'
+import { ControlProps } from '../types'
 
 export type Props = ControlProps &
   SegmentedControlProps & {
@@ -35,7 +35,7 @@ export type Props = ControlProps &
 export const SegmentedControl: React.FC<Props> = ({
   initialIndex,
   onTabPress,
-  labels,
+  routes,
   index,
   containerStyle,
   position,
@@ -55,13 +55,15 @@ export const SegmentedControl: React.FC<Props> = ({
   )
 
   const onValueChange = React.useCallback(
-    (label: string) => {
-      const nextIndex = labels.findIndex((l) => l === label)
+    (idOrTitle: string) => {
+      const nextIndex = routes.findIndex(
+        (route) => route.title === idOrTitle || route.id === idOrTitle
+      )
       trackSelectedIndex.current = nextIndex
       onTabPress(nextIndex)
       setSelectedIndex(nextIndex)
     },
-    [onTabPress, labels]
+    [onTabPress, routes]
   )
 
   React.useEffect(() => {
@@ -76,10 +78,14 @@ export const SegmentedControl: React.FC<Props> = ({
     }
   }, [index])
 
+  const values = React.useMemo(() => {
+    return routes.map((route) => route.title || route.id)
+  }, [routes])
+
   return (
     <View style={[styles.container, containerStyle]}>
       <Control
-        values={labels}
+        values={values}
         onChange={IS_IOS ? onChange : undefined}
         onValueChange={IS_IOS ? undefined : onValueChange}
         selectedIndex={selectedIndex}
