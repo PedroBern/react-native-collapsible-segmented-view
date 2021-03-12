@@ -21,9 +21,11 @@ const coreComponents = getComponentPaths([
   'ScrollComponents/ScrollView',
 ])
 
-const segmentedControlComponents = getComponentPaths(['SegmentedControl'])
+const segmentedControlComponents = getComponentPaths([
+  'ControlComponents/SegmentedControl',
+])
 
-const tabBarComponents = getComponentPaths(['MaterialTabBar'])
+const tabBarComponents = getComponentPaths(['ControlComponents/MaterialTabBar'])
 
 const docs = docgen.withCustomConfig(tsconfig, {
   savePropValueAsString: true,

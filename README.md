@@ -83,10 +83,10 @@ const Header = () => {
 
 const Example: React.FC = () => {
   return (
-    <Segmented.View header={Header}>
-      <Segmented.Segment label="A" component={SegmentA} />
-      <Segmented.Segment label="B" component={SegmentB} />
-      <Segmented.Segment label="C" component={SegmentC} />
+    <Segmented.View renderHeader={Header}>
+      <Segmented.Segment id="A" title="A" component={SegmentA} />
+      <Segmented.Segment id="B" title="B" component={SegmentB} />
+      <Segmented.Segment id="C" title="C" component={SegmentC} />
     </Segmented.View>
   )
 }
@@ -154,9 +154,9 @@ import { Segmented } from 'react-native-collapsible-segmented-view'
 const Example = () => {
    return (
      <Segmented.View hader={MyHeader}>
-       <Segmented.Segment label="A" component={ScreenA} />
-       <Segmented.Segment label="B" component={ScreenB} />
-        <Segmented.Segment label="C" component={ScreenC} />
+       <Segmented.Segment id="A" component={ScreenA} />
+       <Segmented.Segment id="B" component={ScreenB} />
+        <Segmented.Segment id="C" component={ScreenC} />
      </Tabs.Container>
    )
 }
@@ -169,13 +169,13 @@ const Example = () => {
 |animatedValue|`Value \| undefined`||
 |containerHeight|`number \| undefined`|`0`|
 |containerStyle|`ViewStyle \| undefined`||
-|control|`(props: ControlProps) => React.ReactElement`|`IS_IOS ? SegmentedControl : MaterialTabBar`|
 |controlHeight|`number \| undefined`|`48`|
-|header|`() => React.ReactElement`||
 |headerHeight|`number \| undefined`||
 |initialIndex|`number \| undefined`|`0`|
 |keyboardDismissMode|`"none" \| "on-drag" \| "auto" \| undefined`||
 |lazy|`boolean \| undefined`|`false`|
+|renderControl|`FC<ControlProps> \| ((props: ControlProps) => ReactElement<any, string \| ((props: any) => ReactElement<any, string \| ... \| (new (props: any) => Component<any, any, any>)> \| null) \| (new (props: any) => Component<...>)>) \| undefined`||
+|renderHeader|`FC<{}> \| (() => ReactElement<any, string \| ((props: any) => ReactElement<any, string \| ... \| (new (props: any) => Component<any, any, any>)> \| null) \| (new (props: any) => Component<...>)>) \| undefined`||
 |swipeEnabled|`boolean \| undefined`|`true`|
 |topStyle|`ViewStyle \| undefined`||
 
@@ -185,9 +185,9 @@ Wrap your screens with `Segmented.Segment`. Basic usage looks like this:
 
 ```tsx
 <Segmented.View ...>
-  <Segmented.Segment label="A" component={ScreenA} />
-  <Segmented.Segment label="B" component={ScreenB} />
-  <Segmented.Segment label="C" component={ScreenC} />
+  <Segmented.Segment id="A" component={ScreenA} />
+  <Segmented.Segment id="B" component={ScreenB} />
+  <Segmented.Segment id="C" component={ScreenC} />
 </Segmented.Container>
 ```
 
@@ -195,8 +195,13 @@ Wrap your screens with `Segmented.Segment`. Basic usage looks like this:
 
 |name|type|
 |:----:|:----:|
+|accessibilityLabel|`string \| undefined`|
+|accessible|`boolean \| undefined`|
 |component|`() => React.ReactElement`|
-|label|`string`|
+|icon|`string \| undefined`|
+|id|`string`|
+|testID|`string \| undefined`|
+|title|`string \| undefined`|
 
 ### Segmented.FlatList
 
@@ -235,6 +240,7 @@ import {
 |name|type|
 |:----:|:----:|
 |containerStyle|`ViewStyle \| undefined`|
+|routes|`Route[]`|
 
 
 
@@ -258,14 +264,9 @@ import {
   ...
 ```
 
-You can optionally pass custom routes in the same format of [the routes in the navigationState](https://github.com/satya164/react-native-tab-view#navigationstate-required):
+Rendering icons:
 
 ```tsx
-const routes = [
-    { key: 'A', title: 'A', icon: 'home' }
-]
-
-
 const renderIcon={({ route, focused, color }) => (
   <Icon
     name={route.icon}
@@ -276,9 +277,11 @@ const renderIcon={({ route, focused, color }) => (
 
 <Segmented.View
   control={(props) => (
-    <MaterialTabBar routes={routes} renderIcon={renderIcon} {...props} />
+    <MaterialTabBar renderIcon={renderIcon} {...props} />
   )}
+  ...
 >
+    <Segmented.Segment key='article' title='Article' icon='home' component={Article} />
   ...
 ```
 
@@ -305,7 +308,7 @@ const renderIcon={({ route, focused, color }) => (
 |renderIndicator|`((props: Props<any>) => ReactNode) \| undefined`|
 |renderLabel|`((scene: Scene<any> & { focused: boolean; color: string; }) => ReactNode) \| undefined`|
 |renderTabBarItem|`((props: Props<any> & { key: string; }) => ReactElement<any, string \| ((props: any) => ReactElement<any, string \| ... \| (new (props: any) => Component<any, any, any>)> \| null) \| (new (props: any) => Component<...>)>) \| undefined`|
-|routes|`Route[] \| undefined`|
+|routes|`Route[]`|
 |scrollEnabled|`boolean \| undefined`|
 |style|`StyleProp<ViewStyle>`|
 |tabStyle|`StyleProp<ViewStyle>`|
