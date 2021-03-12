@@ -47,7 +47,7 @@ const docs = docgen.withCustomConfig(tsconfig, {
         'onTabPress',
         'index',
         'initialIndex',
-        'labels',
+        'routes',
       ]
       if (blackList.includes(prop.name)) {
         return false

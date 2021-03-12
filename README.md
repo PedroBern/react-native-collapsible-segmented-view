@@ -240,7 +240,6 @@ import {
 |name|type|
 |:----:|:----:|
 |containerStyle|`ViewStyle \| undefined`|
-|routes|`Route[]`|
 
 
 
@@ -308,7 +307,6 @@ const renderIcon={({ route, focused, color }) => (
 |renderIndicator|`((props: Props<any>) => ReactNode) \| undefined`|
 |renderLabel|`((scene: Scene<any> & { focused: boolean; color: string; }) => ReactNode) \| undefined`|
 |renderTabBarItem|`((props: Props<any> & { key: string; }) => ReactElement<any, string \| ((props: any) => ReactElement<any, string \| ... \| (new (props: any) => Component<any, any, any>)> \| null) \| (new (props: any) => Component<...>)>) \| undefined`|
-|routes|`Route[]`|
 |scrollEnabled|`boolean \| undefined`|
 |style|`StyleProp<ViewStyle>`|
 |tabStyle|`StyleProp<ViewStyle>`|
