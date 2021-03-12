@@ -10,6 +10,7 @@ import { FlatList } from './ScrollComponents/FlatList'
 import { ScrollView } from './ScrollComponents/ScrollView'
 import { Segment } from './Segment'
 import { SegmentedView, Props as SegmentedViewProps } from './SegmentedView'
+import { CONTROL_HEIGHT } from './helpers'
 import { useHeaderMeasurements } from './hooks/useHeaderMeasurements'
 import { useIsFocused } from './hooks/useIsFocused'
 import { useSelectedIndex } from './hooks/useSelectedIndex'
@@ -32,6 +33,7 @@ export {
   useIsFocused,
   useSelectedIndex,
   useHeaderMeasurements,
+  CONTROL_HEIGHT,
 }
 
 export const Segmented = {
