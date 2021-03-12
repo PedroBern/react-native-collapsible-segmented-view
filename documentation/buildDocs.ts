@@ -41,11 +41,11 @@ const docs = docgen.withCustomConfig(tsconfig, {
       component.name === 'MaterialTabBar'
     ) {
       const blackList = [
-        'floatIndex',
+        'position',
+        'onTabPress',
         'index',
         'initialIndex',
         'labels',
-        'setIndex',
       ]
       if (blackList.includes(prop.name)) {
         return false

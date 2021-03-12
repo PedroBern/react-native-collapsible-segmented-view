@@ -34,28 +34,47 @@ export type Props = ControlProps &
  */
 export const SegmentedControl: React.FC<Props> = ({
   initialIndex,
-  setIndex,
+  onTabPress,
   labels,
+  index,
   containerStyle,
+  position,
   ...rest
 }) => {
-  const [selectedIndex, setSelectedIndex] = React.useState(initialIndex)
+  const trackSelectedIndex = React.useRef(initialIndex)
+  const [selectedIndex, setSelectedIndex] = React.useState(
+    trackSelectedIndex.current
+  )
 
   const onChange = React.useCallback(
     (event: NativeSyntheticEvent<NativeSegmentedControlIOSChangeEvent>) => {
-      setIndex(event.nativeEvent.selectedSegmentIndex)
+      trackSelectedIndex.current = event.nativeEvent.selectedSegmentIndex
+      onTabPress(event.nativeEvent.selectedSegmentIndex)
     },
-    [setIndex]
+    [onTabPress]
   )
 
   const onValueChange = React.useCallback(
     (label: string) => {
       const nextIndex = labels.findIndex((l) => l === label)
-      setIndex(nextIndex)
+      trackSelectedIndex.current = nextIndex
+      onTabPress(nextIndex)
       setSelectedIndex(nextIndex)
     },
-    [setIndex, labels]
+    [onTabPress, labels]
   )
+
+  React.useEffect(() => {
+    const listener = index.addListener(({ value }) => {
+      if (value !== trackSelectedIndex.current) {
+        trackSelectedIndex.current = value
+        setSelectedIndex(value)
+      }
+    })
+    return () => {
+      index.removeListener(listener)
+    }
+  }, [index])
 
   return (
     <View style={[styles.container, containerStyle]}>

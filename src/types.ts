@@ -19,14 +19,10 @@ export type ScrollRef =
 
 export type ControlProps = {
   initialIndex: number
-  index: Animated.Value
-  floatIndex: Animated.Value
-  setIndex: (nextIndex: number) => void
+  position: Animated.AnimatedAddition
+  onTabPress: (nextIndex: number) => void
   labels: string[]
+  index: Animated.Value
 }
 
-export type SetIndex = (
-  nextIndex: number,
-  _currentIndex?: number,
-  _syncOnly?: boolean
-) => void
+export type SyncScene = (nextIndex: number, _currentIndex?: number) => void

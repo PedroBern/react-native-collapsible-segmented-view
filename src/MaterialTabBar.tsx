@@ -1,29 +1,44 @@
 import React from 'react'
+import { useWindowDimensions } from 'react-native'
 import {
-  Animated,
-  Pressable,
-  StyleSheet,
-  TextStyle,
-  useWindowDimensions,
-  View,
-  ViewStyle,
-} from 'react-native'
+  NavigationState,
+  TabBar,
+  TabBarProps,
+  SceneRendererProps,
+  Route,
+} from 'react-native-tab-view'
 
-import { CONTROL_HEIGHT, IS_IOS } from './helpers'
 import { ControlProps } from './types'
 
-export type Props = ControlProps & {
-  containerStyle?: ViewStyle
-  tabStyle?: ViewStyle
-  indicatorStyle?: ViewStyle
-  pressColor?: string
-  pressOpacity?: number
-  labelStyle?: TextStyle
-  inactiveOpacity?: number
-}
+export type Props = ControlProps &
+  Omit<
+    TabBarProps<any>,
+    | 'position'
+    | 'layout'
+    | 'jumpTo'
+    | 'navigationState'
+    | 'onTabPress'
+    | 'getLabelText'
+    | 'getAccessible'
+    | 'getAccessibilityLabel'
+    | 'getTestID'
+    | 'renderIndicator'
+  > &
+  Partial<
+    Pick<
+      TabBarProps<any>,
+      | 'getLabelText'
+      | 'getAccessible'
+      | 'getAccessibilityLabel'
+      | 'getTestID'
+      | 'renderIndicator'
+    >
+  > & {
+    routes?: Route[]
+  }
 
 /**
- * Default android control.
+ * Default android control. Props are passed to the original [TabBar](https://github.com/satya164/react-native-tab-view#tabbar).
  *
  * Example usage:
  *
@@ -36,113 +51,75 @@ export type Props = ControlProps & {
  * ...
  *
  * <Segmented.View
- *  control={(props) => <MaterialTabBar {...props} indicatorStyle='red' />}
+ *  control={(props) => <MaterialTabBar {...props} />}
  * >
  *  ...
  * ```
+ *
+ * You can optionally pass custom routes in the same format of [the routes in the navigationState](https://github.com/satya164/react-native-tab-view#navigationstate-required):
+ *
+ * ```tsx
+ * const routes = [
+ *    { key: 'A', title: 'A', icon: 'home' }
+ * ]
+ *
+ *
+ * const renderIcon={({ route, focused, color }) => (
+ *  <Icon
+ *    name={route.icon}
+ *    color={color}
+ *  />
+ * )}
+ *
+ *
+ * <Segmented.View
+ *  control={(props) => (
+ *    <MaterialTabBar routes={routes} renderIcon={renderIcon} {...props} />
+ *  )}
+ * >
+ *  ...
+ * ```
+ *
  */
 export const MaterialTabBar: React.FC<Props> = ({
-  setIndex,
+  onTabPress,
   labels,
-  floatIndex,
-  containerStyle,
-  tabStyle,
-  indicatorStyle,
-  pressColor = 'DDDDDD',
-  pressOpacity = IS_IOS ? 0.2 : 1,
-  labelStyle,
-  inactiveOpacity = 0.7,
+  position,
+  initialIndex,
+  index,
+  routes,
+  ...rest
 }) => {
   const windowWidth = useWindowDimensions().width
 
-  const onTabPress = React.useCallback(
-    (nextIndex: number) => {
-      setIndex(nextIndex)
+  const _onTabPress = React.useCallback(
+    (label: string) => {
+      const index = labels.findIndex((l) => l === label)
+      onTabPress(index)
     },
-    [setIndex]
+    [onTabPress, labels]
   )
 
-  const [translateX, setTraslateX] = React.useState(
-    floatIndex.interpolate({
-      inputRange: labels.map((_, i) => i),
-      outputRange: labels.map((_, i) => (windowWidth / labels.length) * i),
-    })
-  )
+  const sceneRendererProps = React.useMemo<SceneRendererProps>(() => {
+    return {
+      position,
+      layout: { width: windowWidth, height: 0 },
+      jumpTo: _onTabPress,
+    }
+  }, [_onTabPress, position, windowWidth])
 
-  React.useEffect(() => {
-    setTraslateX(
-      floatIndex.interpolate({
-        inputRange: labels.map((_, i) => i),
-        outputRange: labels.map((_, i) => (windowWidth / labels.length) * i),
-      })
-    )
-  }, [floatIndex, labels, windowWidth])
+  const navigationState = React.useMemo<NavigationState<any>>(() => {
+    return {
+      index: initialIndex,
+      routes: routes ? routes : labels.map((l) => ({ key: l, title: l })),
+    }
+  }, [initialIndex, labels, routes])
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      {labels.map((label, index) => {
-        return (
-          <Pressable
-            key={label}
-            onPress={() => onTabPress(index)}
-            android_ripple={{
-              borderless: true,
-              color: pressColor,
-            }}
-            style={({ pressed }) => [
-              { opacity: pressed ? pressOpacity : 1 },
-              styles.tab,
-              tabStyle,
-            ]}
-          >
-            <Animated.Text
-              style={[
-                styles.label,
-                {
-                  opacity: floatIndex.interpolate({
-                    inputRange: labels.map((_, i) => i),
-                    outputRange: labels.map((_, i) =>
-                      i === index ? 1 : inactiveOpacity
-                    ),
-                  }),
-                },
-                labelStyle,
-              ]}
-            >
-              {label.toUpperCase()}
-            </Animated.Text>
-          </Pressable>
-        )
-      })}
-      <Animated.View
-        style={[
-          styles.indicator,
-          indicatorStyle,
-          { transform: [{ translateX }], width: windowWidth / labels.length },
-        ]}
-      />
-    </View>
+    <TabBar
+      {...sceneRendererProps}
+      navigationState={navigationState}
+      {...rest}
+    />
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-  },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    height: CONTROL_HEIGHT,
-  },
-  label: {
-    color: 'black',
-  },
-  indicator: {
-    position: 'absolute',
-    bottom: 0,
-    height: 2,
-    backgroundColor: '#2196f3',
-  },
-})

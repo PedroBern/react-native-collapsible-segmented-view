@@ -27,10 +27,10 @@ export type SegmentReactElement = React.ReactElement<Props>
  * ```
  */
 export const Segment = ({ component: Component }: Props) => {
-  const { opacity, zIndex, index: segmentIndex } = useSegmentContext()
+  const { opacity, index: segmentIndex } = useSegmentContext()
   const {
     lazy,
-    setIndex,
+    syncScene,
     initialIndex,
     index,
     prevIndex,
@@ -62,13 +62,13 @@ export const Segment = ({ component: Component }: Props) => {
   React.useEffect(() => {
     if (mount && !trackMount.current) {
       trackMount.current = mount
-      setIndex(segmentIndex, prevIndex.current, true)
+      syncScene(segmentIndex, prevIndex.current)
       spring(wrapperOpacity, 1).start()
     }
-  }, [mount, prevIndex, segmentIndex, setIndex, wrapperOpacity])
+  }, [mount, prevIndex, segmentIndex, syncScene, wrapperOpacity])
 
   return (
-    <Animated.View style={[styles.scene, { opacity, zIndex }]}>
+    <Animated.View style={[styles.scene, { opacity }]}>
       <Animated.View style={[styles.wrapper, { opacity: wrapperOpacity }]}>
         {mount && <Component />}
       </Animated.View>

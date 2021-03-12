@@ -29,7 +29,7 @@
 
 # Expo app
 
-Collapsible Segmented View for React Native.
+Collapsible Segmented View for React Native
 
 - [View it with Expo](https://expo.io/@pedrobern/react-native-collapsible-segmented-view-demos).
 - Checkout the [examples](https://github.com/PedroBern/react-native-collapsible-segmented-view/tree/main/example) for the source code of the Expo app.
@@ -48,7 +48,8 @@ The [react-native-tab-view](https://github.com/satya164/react-native-tab-view) e
 
 # Features
 
-- Implements [SegmentedControl](https://developer.apple.com/design/human-interface-guidelines/ios/controls/segmented-controls/) and [Fixed Material Tab Bar](https://material.io/components/tabs)
+- [Material Tab Bar](https://github.com/satya164/react-native-tab-view#tabbar) for Android
+- [SegmentedControl](https://github.com/react-native-segmented-control/segmented-control#react-native-segmented-controlsegmented-control) for iOS
 - Lazy support
 - Highly customizable
 - Fully typed with [TypeScript](https://typescriptlang.org)
@@ -61,6 +62,8 @@ Open a Terminal in the project root and run:
 yarn add react-native-collapsible-segmented-view
 
 expo install @react-native-community/segmented-control
+
+yarn add react-native-tab-view react-native-pager-view
 ```
 
 # Quick Start
@@ -163,16 +166,17 @@ const Example = () => {
 
 |name|type|default|
 |:----:|:----:|:----:|
-|animatedValue|`Value \| undefined`|`new Animated.Value(0)`|
+|animatedValue|`Value \| undefined`||
 |containerHeight|`number \| undefined`|`0`|
 |containerStyle|`ViewStyle \| undefined`||
 |control|`(props: ControlProps) => React.ReactElement`|`IS_IOS ? SegmentedControl : MaterialTabBar`|
 |controlHeight|`number \| undefined`|`48`|
-|disableFadeIn|`boolean \| undefined`|`false`|
 |header|`() => React.ReactElement`||
 |headerHeight|`number \| undefined`||
 |initialIndex|`number \| undefined`|`0`|
+|keyboardDismissMode|`"none" \| "on-drag" \| "auto" \| undefined`||
 |lazy|`boolean \| undefined`|`false`|
+|swipeEnabled|`boolean \| undefined`|`true`|
 |topStyle|`ViewStyle \| undefined`||
 
 ### Segmented.Segment
@@ -236,7 +240,7 @@ import {
 
 ### MaterialTabBar
 
-Default android control.
+Default android control. Props are passed to the original [TabBar](https://github.com/satya164/react-native-tab-view#tabbar).
 
 Example usage:
 
@@ -249,22 +253,62 @@ import {
 ...
 
 <Segmented.View
-  control={(props) => <MaterialTabBar {...props} indicatorStyle='red' />}
+  control={(props) => <MaterialTabBar {...props} />}
+>
+  ...
+```
+
+You can optionally pass custom routes in the same format of [the routes in the navigationState](https://github.com/satya164/react-native-tab-view#navigationstate-required):
+
+```tsx
+const routes = [
+    { key: 'A', title: 'A', icon: 'home' }
+]
+
+
+const renderIcon={({ route, focused, color }) => (
+  <Icon
+    name={route.icon}
+    color={color}
+  />
+)}
+
+
+<Segmented.View
+  control={(props) => (
+    <MaterialTabBar routes={routes} renderIcon={renderIcon} {...props} />
+  )}
 >
   ...
 ```
 
 #### Props
 
-|name|type|default|
-|:----:|:----:|:----:|
-|containerStyle|`ViewStyle \| undefined`||
-|inactiveOpacity|`number \| undefined`|`0.7`|
-|indicatorStyle|`ViewStyle \| undefined`||
-|labelStyle|`TextStyle \| undefined`||
-|pressColor|`string \| undefined`|`DDDDDD`|
-|pressOpacity|`number \| undefined`|`IS_IOS ? 0.2 : 1`|
-|tabStyle|`ViewStyle \| undefined`||
+|name|type|
+|:----:|:----:|
+|activeColor|`string \| undefined`|
+|bounces|`boolean \| undefined`|
+|contentContainerStyle|`StyleProp<ViewStyle>`|
+|getAccessibilityLabel|`((scene: Scene<any>) => string \| undefined) \| undefined`|
+|getAccessible|`((scene: Scene<any>) => boolean \| undefined) \| undefined`|
+|getLabelText|`((scene: Scene<any>) => string \| undefined) \| undefined`|
+|getTestID|`((scene: Scene<any>) => string \| undefined) \| undefined`|
+|inactiveColor|`string \| undefined`|
+|indicatorContainerStyle|`StyleProp<ViewStyle>`|
+|indicatorStyle|`StyleProp<ViewStyle>`|
+|labelStyle|`StyleProp<TextStyle>`|
+|onTabLongPress|`((scene: Scene<any>) => void) \| undefined`|
+|pressColor|`string \| undefined`|
+|pressOpacity|`number \| undefined`|
+|renderBadge|`((scene: Scene<any>) => ReactNode) \| undefined`|
+|renderIcon|`((scene: Scene<any> & { focused: boolean; color: string; }) => ReactNode) \| undefined`|
+|renderIndicator|`((props: Props<any>) => ReactNode) \| undefined`|
+|renderLabel|`((scene: Scene<any> & { focused: boolean; color: string; }) => ReactNode) \| undefined`|
+|renderTabBarItem|`((props: Props<any> & { key: string; }) => ReactElement<any, string \| ((props: any) => ReactElement<any, string \| ... \| (new (props: any) => Component<any, any, any>)> \| null) \| (new (props: any) => Component<...>)>) \| undefined`|
+|routes|`Route[] \| undefined`|
+|scrollEnabled|`boolean \| undefined`|
+|style|`StyleProp<ViewStyle>`|
+|tabStyle|`StyleProp<ViewStyle>`|
 
 
 
