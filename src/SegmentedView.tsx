@@ -132,6 +132,7 @@ export const SegmentedView: React.FC<Props> = ({
   const [opacities] = React.useState(
     routes.map((_, i) => new Animated.Value(initialIndex === i ? 1 : 0))
   )
+  const visibleScenes = React.useRef(routes.map((_, i) => initialIndex === i))
 
   const maybeTriggerRerenderAfterOnLayout = React.useCallback(() => {
     // layout calls = hedaer + control + container
@@ -274,23 +275,36 @@ export const SegmentedView: React.FC<Props> = ({
           ref && scrollTo(ref, -layoutHeights.contentInset, true)
         }
         spring(opacities[nextIndex], 1).start()
+        visibleScenes.current[nextIndex] = true
       }
     },
     [layoutHeights.contentInset, layoutHeights.header, opacities]
   )
 
-  const hideLastScene = React.useCallback(
+  // we hide unfocused scenes to sync while it's hidden,
+  // preventing showing a gap before syncing
+  const hideUnfocusedScenes = React.useCallback(
     (nextIndex: number) => {
-      const currentIndex = trackIndex.current
-      if (nextIndex !== currentIndex) {
-        spring(opacities[currentIndex], 0).start()
+      const oldIndex = trackIndex.current
+      if (nextIndex !== oldIndex) {
+        spring(opacities[oldIndex], 0).start()
         trackIndex.current = nextIndex
-        prevIndex.current = currentIndex
+        prevIndex.current = oldIndex
+        visibleScenes.current[oldIndex] = false
+        // ScrollStateChanged event may turned 2 screens visible,
+        // so we make sure to hide it
+        visibleScenes.current.forEach((visible, i) => {
+          if (i !== nextIndex && visible) {
+            opacities[i].setValue(0)
+            visibleScenes.current[i] = false
+          }
+        })
       }
     },
     [opacities]
   )
 
+  // sync the next scene as soon as it appears while swiping
   const onPageScrollStateChanged = React.useCallback(
     (state: PageScrollStateChangedNativeEvent) => {
       if (!settlingTabPress.current) {
@@ -312,6 +326,7 @@ export const SegmentedView: React.FC<Props> = ({
                 next < routes.length
               ) {
                 syncScene(next)
+                visibleScenes.current[next] = true
               }
               pagerOffset.removeListener(subscription)
             })
@@ -320,16 +335,6 @@ export const SegmentedView: React.FC<Props> = ({
       }
     },
     [routes.length, pagerOffset, syncScene]
-  )
-
-  const onPageSelected = React.useCallback(
-    (event: PagerViewOnPageSelectedEvent) => {
-      const nextIndex = event.nativeEvent.position
-      syncScene(nextIndex)
-      hideLastScene(nextIndex)
-      index.setValue(nextIndex)
-    },
-    [hideLastScene, syncScene, index]
   )
 
   // swiping while settling breaks the sync logic on ios,
@@ -341,16 +346,37 @@ export const SegmentedView: React.FC<Props> = ({
   const settlingTabPress = React.useRef(false)
   const nextIndexAfterTabPress = React.useRef<number | undefined>(undefined)
 
+  const onPageSelected = React.useCallback(
+    (event: PagerViewOnPageSelectedEvent) => {
+      const nextIndex = event.nativeEvent.position
+      // make sure to sync again here, because the user
+      // can start swiping in one direction, and then turns the otherway,
+      // that won't be synced on the dragging event
+      syncScene(nextIndex)
+      hideUnfocusedScenes(nextIndex)
+      index.setValue(nextIndex)
+    },
+    [hideUnfocusedScenes, index, syncScene]
+  )
+
   const onTabPress = React.useCallback(
-    (index: number) => {
+    (nextIndex: number) => {
+      settlingTabPress.current = true
+      nextIndexAfterTabPress.current = nextIndex
       if (IS_IOS) {
-        settlingTabPress.current = true
-        nextIndexAfterTabPress.current = index
         iosPreventSwipeWhileSettlingTabPress.setValue(2)
       }
-      requestAnimationFrame(() => pagerRef.current?.setPage(index))
+      syncScene(nextIndex)
+      hideUnfocusedScenes(nextIndex)
+      index.setValue(nextIndex)
+      requestAnimationFrame(() => pagerRef.current?.setPage(nextIndex))
     },
-    [iosPreventSwipeWhileSettlingTabPress]
+    [
+      hideUnfocusedScenes,
+      index,
+      iosPreventSwipeWhileSettlingTabPress,
+      syncScene,
+    ]
   )
 
   React.useEffect(() => {
@@ -362,7 +388,9 @@ export const SegmentedView: React.FC<Props> = ({
       ) {
         settlingTabPress.current = false
         nextIndexAfterTabPress.current = undefined
-        iosPreventSwipeWhileSettlingTabPress.setValue(-1)
+        if (IS_IOS) {
+          iosPreventSwipeWhileSettlingTabPress.setValue(-1)
+        }
       }
     })
 
