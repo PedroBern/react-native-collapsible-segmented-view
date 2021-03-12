@@ -265,13 +265,13 @@ export const SegmentedView: React.FC<Props> = ({
           offsets.current[nextIndex] = nextPosition
         }
 
-        // scroll to the top if is refrehing the current tab on iOS
-        // before changing tabs
+        // scroll to the top if is refrehing the
+        // current tab on iOS before changing tabs
         const isRefreshingOnIOS =
           IS_IOS && currOffset < -layoutHeights.contentInset
         if (isRefreshingOnIOS) {
           const ref = refs.current[currentIndex]?.current
-          ref && scrollTo(ref, -layoutHeights.contentInset)
+          ref && scrollTo(ref, -layoutHeights.contentInset, true)
         }
         spring(opacities[nextIndex], 1).start()
       }
