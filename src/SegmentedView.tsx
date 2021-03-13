@@ -129,6 +129,7 @@ export const SegmentedView: React.FC<Props> = ({
     })
   )
 
+  const onMomentum = React.useRef(false)
   const [opacities] = React.useState(
     routes.map((_, i) => new Animated.Value(initialIndex === i ? 1 : 0))
   )
@@ -361,15 +362,19 @@ export const SegmentedView: React.FC<Props> = ({
 
   const onTabPress = React.useCallback(
     (nextIndex: number) => {
-      settlingTabPress.current = true
-      nextIndexAfterTabPress.current = nextIndex
-      if (IS_IOS) {
-        iosPreventSwipeWhileSettlingTabPress.setValue(2)
+      // disable tab press on momentum scroll
+      // to prevent breaking sync logic
+      if (!onMomentum.current) {
+        settlingTabPress.current = true
+        nextIndexAfterTabPress.current = nextIndex
+        if (IS_IOS) {
+          iosPreventSwipeWhileSettlingTabPress.setValue(2)
+        }
+        syncScene(nextIndex)
+        hideUnfocusedScenes(nextIndex)
+        index.setValue(nextIndex)
+        requestAnimationFrame(() => pagerRef.current?.setPage(nextIndex))
       }
-      syncScene(nextIndex)
-      hideUnfocusedScenes(nextIndex)
-      index.setValue(nextIndex)
-      requestAnimationFrame(() => pagerRef.current?.setPage(nextIndex))
     },
     [
       hideUnfocusedScenes,
@@ -416,6 +421,7 @@ export const SegmentedView: React.FC<Props> = ({
         prevIndex,
         trackIndex,
         translateY: translateY.current,
+        onMomentum,
       }}
     >
       <View

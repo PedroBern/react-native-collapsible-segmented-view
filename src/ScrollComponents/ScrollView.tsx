@@ -18,6 +18,8 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
   onContentSizeChange,
   children,
   refreshControl,
+  onMomentumScrollBegin,
+  onMomentumScrollEnd,
   ...rest
 }) => {
   const ref = React.useRef<RNScrollView>()
@@ -29,13 +31,34 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
 
   const { index } = useSegmentContext()
 
-  const { scrollY, setRef, contentInset } = useSegmentedViewContext()
+  const {
+    scrollY,
+    setRef,
+    contentInset,
+    onMomentum,
+  } = useSegmentedViewContext()
 
   React.useEffect(() => {
     // @ts-ignore
     setRef(ref, index)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const _onMomentumScrollBegin = React.useCallback(
+    (event) => {
+      onMomentum.current = true
+      onMomentumScrollBegin?.(event)
+    },
+    [onMomentum, onMomentumScrollBegin]
+  )
+
+  const _onMomentumScrollEnd = React.useCallback(
+    (event) => {
+      onMomentum.current = false
+      onMomentumScrollEnd?.(event)
+    },
+    [onMomentum, onMomentumScrollEnd]
+  )
 
   return (
     <Animated.ScrollView
@@ -63,6 +86,8 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
         x: 0,
       }}
       automaticallyAdjustContentInsets={false}
+      onMomentumScrollBegin={_onMomentumScrollBegin}
+      onMomentumScrollEnd={_onMomentumScrollEnd}
     >
       {children}
     </Animated.ScrollView>

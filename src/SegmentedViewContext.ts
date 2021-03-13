@@ -18,6 +18,7 @@ export type SegmentedViewContextType = {
   trackIndex: React.MutableRefObject<number>
   translateY: Animated.AnimatedInterpolation
   onTabPress: (nextIndex: number) => void
+  onMomentum: React.MutableRefObject<boolean>
 }
 
 export const SegmentedViewContext = React.createContext<

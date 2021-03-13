@@ -12,6 +12,8 @@ export function FlatList<T = any>({
   contentContainerStyle,
   style,
   refreshControl,
+  onMomentumScrollBegin,
+  onMomentumScrollEnd,
   ...rest
 }: FlatListProps<T>): React.ReactElement {
   const ref = React.useRef<RNFlatList>()
@@ -23,13 +25,34 @@ export function FlatList<T = any>({
 
   const { index } = useSegmentContext()
 
-  const { scrollY, setRef, contentInset } = useSegmentedViewContext()
+  const {
+    scrollY,
+    setRef,
+    contentInset,
+    onMomentum,
+  } = useSegmentedViewContext()
 
   React.useEffect(() => {
     // @ts-ignore
     setRef(ref, index)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const _onMomentumScrollBegin = React.useCallback(
+    (event) => {
+      onMomentum.current = true
+      onMomentumScrollBegin?.(event)
+    },
+    [onMomentum, onMomentumScrollBegin]
+  )
+
+  const _onMomentumScrollEnd = React.useCallback(
+    (event) => {
+      onMomentum.current = false
+      onMomentumScrollEnd?.(event)
+    },
+    [onMomentum, onMomentumScrollEnd]
+  )
 
   return (
     <Animated.FlatList
@@ -58,6 +81,8 @@ export function FlatList<T = any>({
           ...refreshControl.props,
         })
       }
+      onMomentumScrollBegin={_onMomentumScrollBegin}
+      onMomentumScrollEnd={_onMomentumScrollEnd}
     />
   )
 }
