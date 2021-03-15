@@ -33,10 +33,8 @@ export type Props = {
   controlHeight?: number
   containerHeight?: number
   children: SegmentReactElement[]
-  renderHeader?: React.FC | (() => React.ReactElement<any>)
-  renderControl?:
-    | React.FC<ControlProps>
-    | ((props: ControlProps) => React.ReactElement<any>)
+  renderHeader?: () => React.ReactElement<any>
+  renderControl?: (props: ControlProps) => React.ReactElement<any>
   lazy?: boolean
   containerStyle?: ViewStyle
   topStyle?: ViewStyle
@@ -116,7 +114,10 @@ export const SegmentedView: React.FC<Props> = ({
   const [pagerIndex] = React.useState(new Animated.Value(initialIndex))
   const [pagerOffset] = React.useState(new Animated.Value(0))
 
-  const [position] = React.useState(Animated.add(pagerIndex, pagerOffset))
+  const [nextSceneDistance] = React.useState(new Animated.Value(1))
+  const [position] = React.useState(
+    Animated.add(pagerIndex, Animated.multiply(pagerOffset, nextSceneDistance))
+  )
 
   const translateY = React.useRef(
     scrollY.interpolate({
@@ -350,6 +351,10 @@ export const SegmentedView: React.FC<Props> = ({
   const onPageSelected = React.useCallback(
     (event: PagerViewOnPageSelectedEvent) => {
       const nextIndex = event.nativeEvent.position
+      if (IS_IOS) {
+        // reset scene distance
+        nextSceneDistance.setValue(1)
+      }
       // make sure to sync again here, because the user
       // can start swiping in one direction, and then turns the otherway,
       // that won't be synced on the dragging event
@@ -357,7 +362,7 @@ export const SegmentedView: React.FC<Props> = ({
       hideUnfocusedScenes(nextIndex)
       index.setValue(nextIndex)
     },
-    [hideUnfocusedScenes, index, syncScene]
+    [hideUnfocusedScenes, index, nextSceneDistance, syncScene]
   )
 
   const onTabPress = React.useCallback(
@@ -365,6 +370,11 @@ export const SegmentedView: React.FC<Props> = ({
       // disable tab press on momentum scroll
       // to prevent breaking sync logic
       if (!onMomentum.current) {
+        if (IS_IOS) {
+          // scene distance can be greater than 1 when tab pressing,
+          // affects only iOS should be fixed in
+          nextSceneDistance.setValue(Math.abs(trackIndex.current - nextIndex))
+        }
         settlingTabPress.current = true
         nextIndexAfterTabPress.current = nextIndex
         if (IS_IOS) {
@@ -381,6 +391,7 @@ export const SegmentedView: React.FC<Props> = ({
       index,
       iosPreventSwipeWhileSettlingTabPress,
       syncScene,
+      nextSceneDistance,
     ]
   )
 
