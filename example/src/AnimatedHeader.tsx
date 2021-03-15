@@ -43,7 +43,7 @@ export const Header = () => {
 }
 
 const Example: ExampleComponentType = () => {
-  return <ExampleComponent header={Header} />
+  return <ExampleComponent renderHeader={Header} />
 }
 
 const styles = StyleSheet.create({

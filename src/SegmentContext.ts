@@ -3,7 +3,6 @@ import { Animated } from 'react-native'
 
 export type SegmentContextType = {
   opacity: Animated.Value
-  zIndex: Animated.Value
   index: number
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { Platform, StyleSheet, View, Text } from 'react-native'
 
 type Props = {
   title: string
@@ -28,7 +28,10 @@ export { buildHeader }
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: '#2196f3',
+    backgroundColor: Platform.select({
+      ios: '#2196f3',
+      android: '#58b0f5',
+    }),
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,

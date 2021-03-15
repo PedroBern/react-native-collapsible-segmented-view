@@ -21,9 +21,11 @@ const coreComponents = getComponentPaths([
   'ScrollComponents/ScrollView',
 ])
 
-const segmentedControlComponents = getComponentPaths(['SegmentedControl'])
+const segmentedControlComponents = getComponentPaths([
+  'ControlComponents/SegmentedControl',
+])
 
-const tabBarComponents = getComponentPaths(['MaterialTabBar'])
+const tabBarComponents = getComponentPaths(['ControlComponents/MaterialTabBar'])
 
 const docs = docgen.withCustomConfig(tsconfig, {
   savePropValueAsString: true,
@@ -41,11 +43,11 @@ const docs = docgen.withCustomConfig(tsconfig, {
       component.name === 'MaterialTabBar'
     ) {
       const blackList = [
-        'floatIndex',
+        'position',
+        'onTabPress',
         'index',
         'initialIndex',
-        'labels',
-        'setIndex',
+        'routes',
       ]
       if (blackList.includes(prop.name)) {
         return false

@@ -9,7 +9,7 @@ const title = 'Undefined header height'
 const Header = buildHeader(title)
 
 const Example: ExampleComponentType = () => {
-  return <ExampleComponent header={Header} headerHeight={undefined} />
+  return <ExampleComponent renderHeader={Header} headerHeight={undefined} />
 }
 
 Example.title = title

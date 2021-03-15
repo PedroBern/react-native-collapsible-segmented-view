@@ -8670,6 +8670,16 @@ react-native-gesture-handler@~1.6.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-pager-view@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.1.2.tgz#a6957afc81f5729cbb884fe963df3482e2f46877"
+  integrity sha512-UvPvjtuIkiI9Ti8NoMH+fiFj0ehfFv4WkNUGM46dOJfOxmE6Z/hoyJjymOHU//iLkQSMO+YNherZs0HcijdA2A==
+
+react-native-tab-view@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.0.0.tgz#ea01e0956a4a96dd87d3cfdd8ee39f9aad319943"
+  integrity sha512-uuvLV3KWVXx3ZEESBYALo4w8fuHFUrrg2K2OCtfHv+xOmTWjjRzm+opi0PMXSLOxl7+uMeJvJYEzR13B6pXpkA==
+
 react-native@~0.62.2:
   version "0.62.2"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.62.2.tgz#d831e11a3178705449142df19a70ac2ca16bad10"
