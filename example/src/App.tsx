@@ -16,6 +16,7 @@ import AnimatedHeader from './AnimatedHeader'
 import Default from './Default'
 import Lazy from './Lazy'
 import QuickStartDemo from './QuickStartDemo'
+import ScrollableTabBar from './ScrollableTabBar'
 import UndefinedHeaderHeight from './UndefinedHeaderHeight'
 import { ExampleComponentType } from './types'
 
@@ -25,6 +26,7 @@ const EXAMPLE_COMPONENTS: ExampleComponentType[] = [
   Lazy,
   AnimatedHeader,
   UndefinedHeaderHeight,
+  ScrollableTabBar,
 ]
 
 const ExampleList: React.FC<object> = () => {
