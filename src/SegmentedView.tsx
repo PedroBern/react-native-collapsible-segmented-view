@@ -29,10 +29,8 @@ export type Props = {
   controlHeight?: number
   containerHeight?: number
   children: SegmentReactElement[]
-  header?: React.FC | (() => React.ReactElement<any>)
-  control?:
-    | React.FC<ControlProps>
-    | ((props: ControlProps) => React.ReactElement<any>)
+  header?: (props?: any) => JSX.Element
+  control?: (props: ControlProps) => JSX.Element
   lazy?: boolean
   containerStyle?: ViewStyle
   topStyle?: ViewStyle
@@ -56,7 +54,7 @@ export type Props = {
  * }
  * ```
  */
-export const SegmentedView: React.FC<Props> = ({
+export const SegmentedView: (props: Props) => JSX.Element = ({
   initialIndex = 0,
   animatedValue,
   headerHeight,
