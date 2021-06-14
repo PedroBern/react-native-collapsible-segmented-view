@@ -12,7 +12,9 @@ import { useCollapsibleStyle } from '../useCollapsibleStyle'
 /**
  * Use like a regular ScrollView.
  */
-export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
+export const ScrollView: React.FC<
+  React.PropsWithChildren<Omit<ScrollViewProps, 'onScroll'>>
+> = ({
   contentContainerStyle,
   style,
   onContentSizeChange,
