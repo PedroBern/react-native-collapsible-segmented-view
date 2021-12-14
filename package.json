@@ -75,7 +75,7 @@
     "@react-native-community/segmented-control": "~2.0.0",
     "react": "*",
     "react-native": "*",
-    "react-native-pager-view": "^5.1.0",
+    "react-native-pager-view": "5.4.6",
     "react-native-tab-view": "^3.0.0"
   },
   "husky": {
