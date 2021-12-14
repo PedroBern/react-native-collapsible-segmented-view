@@ -4,6 +4,7 @@ import { Animated } from 'react-native'
 export type SegmentContextType = {
   opacity: Animated.Value
   index: number
+  hideUnfocusedScenes: (currentIndex: number) => void
 }
 
 export const SegmentContext = React.createContext<

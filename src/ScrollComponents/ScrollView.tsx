@@ -20,6 +20,7 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
   refreshControl,
   onMomentumScrollBegin,
   onMomentumScrollEnd,
+  onScrollBeginDrag,
   ...rest
 }) => {
   const ref = React.useRef<RNScrollView>()
@@ -29,14 +30,10 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
     progressViewOffset,
   } = useCollapsibleStyle()
 
-  const { index } = useSegmentContext()
+  const { index, hideUnfocusedScenes } = useSegmentContext()
 
-  const {
-    scrollY,
-    setRef,
-    contentInset,
-    onMomentum,
-  } = useSegmentedViewContext()
+  const { scrollY, setRef, contentInset, onMomentum } =
+    useSegmentedViewContext()
 
   React.useEffect(() => {
     // @ts-ignore
@@ -58,6 +55,14 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
       onMomentumScrollEnd?.(event)
     },
     [onMomentum, onMomentumScrollEnd]
+  )
+
+  const _onScrollBeginDrag = React.useCallback(
+    (event) => {
+      hideUnfocusedScenes(index)
+      onScrollBeginDrag?.(event)
+    },
+    [hideUnfocusedScenes, index, onScrollBeginDrag]
   )
 
   return (
@@ -88,6 +93,7 @@ export const ScrollView: React.FC<Omit<ScrollViewProps, 'onScroll'>> = ({
       automaticallyAdjustContentInsets={false}
       onMomentumScrollBegin={_onMomentumScrollBegin}
       onMomentumScrollEnd={_onMomentumScrollEnd}
+      onScrollBeginDrag={_onScrollBeginDrag}
     >
       {children}
     </Animated.ScrollView>

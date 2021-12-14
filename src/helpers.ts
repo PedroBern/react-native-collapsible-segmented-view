@@ -29,14 +29,8 @@ export const extractSegmentRouteProps = (
   const props: Route[] = []
   Children.forEach(segments, (element) => {
     if (React.isValidElement(element)) {
-      const {
-        id,
-        title,
-        icon,
-        accessible,
-        accessibilityLabel,
-        testID,
-      } = element.props
+      const { id, title, icon, accessible, accessibilityLabel, testID } =
+        element.props
       props.push({ id, title, icon, accessible, accessibilityLabel, testID })
     }
   })

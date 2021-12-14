@@ -14,6 +14,7 @@ export function FlatList<T = any>({
   refreshControl,
   onMomentumScrollBegin,
   onMomentumScrollEnd,
+  onScrollBeginDrag,
   ...rest
 }: FlatListProps<T>): React.ReactElement {
   const ref = React.useRef<RNFlatList>()
@@ -23,14 +24,10 @@ export function FlatList<T = any>({
     progressViewOffset,
   } = useCollapsibleStyle()
 
-  const { index } = useSegmentContext()
+  const { index, hideUnfocusedScenes } = useSegmentContext()
 
-  const {
-    scrollY,
-    setRef,
-    contentInset,
-    onMomentum,
-  } = useSegmentedViewContext()
+  const { scrollY, setRef, contentInset, onMomentum } =
+    useSegmentedViewContext()
 
   React.useEffect(() => {
     // @ts-ignore
@@ -52,6 +49,14 @@ export function FlatList<T = any>({
       onMomentumScrollEnd?.(event)
     },
     [onMomentum, onMomentumScrollEnd]
+  )
+
+  const _onScrollBeginDrag = React.useCallback(
+    (event) => {
+      hideUnfocusedScenes(index)
+      onScrollBeginDrag?.(event)
+    },
+    [hideUnfocusedScenes, index, onScrollBeginDrag]
   )
 
   return (
@@ -83,6 +88,7 @@ export function FlatList<T = any>({
       }
       onMomentumScrollBegin={_onMomentumScrollBegin}
       onMomentumScrollEnd={_onMomentumScrollEnd}
+      onScrollBeginDrag={_onScrollBeginDrag}
     />
   )
 }

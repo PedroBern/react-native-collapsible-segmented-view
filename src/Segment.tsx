@@ -28,13 +28,8 @@ export type SegmentReactElement = React.ReactElement<Props>
  */
 export const Segment = ({ component: Component }: Props) => {
   const { opacity, index: segmentIndex } = useSegmentContext()
-  const {
-    lazy,
-    syncScene,
-    initialIndex,
-    index,
-    prevIndex,
-  } = useSegmentedViewContext()
+  const { lazy, syncScene, initialIndex, index, prevIndex } =
+    useSegmentedViewContext()
 
   const trackMount = React.useRef(lazy ? initialIndex === segmentIndex : true)
   const [wrapperOpacity] = React.useState(
