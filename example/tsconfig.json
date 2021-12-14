@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
-    "rootDirs": ["src"],
-  }
+    "rootDirs": ["src"]
+  },
+  "extends": "expo/tsconfig.base"
 }
