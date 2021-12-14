@@ -61,7 +61,7 @@ const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager)
  * }
  * ```
  */
-export const SegmentedView: React.FC<Props> = ({
+export const SegmentedView: (props: Props) => JSX.Element = ({
   initialIndex = 0,
   animatedValue,
   headerHeight,

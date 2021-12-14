@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.2.0...v1.2.1) (2021-06-13)
+
+
+### Bug Fixes
+
+* **types:** update header and control types ([440fa2e](https://github.com/PedroBern/react-native-collapsible-segmented-view/commit/440fa2e81aca33f28eaa7723df6ba2831c955d9e))
+
 # [1.2.0](https://github.com/PedroBern/react-native-collapsible-segmented-view/compare/v1.1.1...v1.2.0) (2021-03-11)
 
 
