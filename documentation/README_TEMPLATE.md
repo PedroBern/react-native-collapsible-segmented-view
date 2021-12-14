@@ -29,7 +29,7 @@
 
 # Expo app
 
-Collapsible Segmented View for React Native.
+Collapsible Segmented View for React Native
 
 - [View it with Expo](https://expo.io/@pedrobern/react-native-collapsible-segmented-view-demos).
 - Checkout the [examples](https://github.com/PedroBern/react-native-collapsible-segmented-view/tree/main/example) for the source code of the Expo app.
@@ -48,7 +48,8 @@ The [react-native-tab-view](https://github.com/satya164/react-native-tab-view) e
 
 # Features
 
-- Implements [SegmentedControl](https://developer.apple.com/design/human-interface-guidelines/ios/controls/segmented-controls/) and [Fixed Material Tab Bar](https://material.io/components/tabs)
+- [Material Tab Bar](https://github.com/satya164/react-native-tab-view#tabbar) for Android
+- [SegmentedControl](https://github.com/react-native-segmented-control/segmented-control#react-native-segmented-controlsegmented-control) for iOS
 - Lazy support
 - Highly customizable
 - Fully typed with [TypeScript](https://typescriptlang.org)
@@ -61,6 +62,8 @@ Open a Terminal in the project root and run:
 yarn add react-native-collapsible-segmented-view
 
 expo install @react-native-community/segmented-control
+
+yarn add react-native-tab-view react-native-pager-view
 ```
 
 # Quick Start

@@ -9,7 +9,7 @@ const title = 'Lazy'
 const Header = buildHeader(title)
 
 const Example: ExampleComponentType = () => {
-  return <ExampleComponent header={Header} lazy />
+  return <ExampleComponent renderHeader={Header} lazy />
 }
 
 Example.title = title

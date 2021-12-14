@@ -1,7 +1,8 @@
-import { Children } from 'react'
+import React, { Children } from 'react'
 import { Animated, Platform } from 'react-native'
 
-import { ScrollElement } from './types'
+import { SegmentReactElement } from './Segment'
+import { Route, ScrollElement } from './types'
 
 export const IS_IOS = Platform.OS === 'ios'
 
@@ -22,15 +23,18 @@ export const spring = (
   })
 }
 
-export const extractLabels = (
-  segments: { props: { label: string } }[]
-): string[] => {
-  const labels: string[] = []
+export const extractSegmentRouteProps = (
+  segments: SegmentReactElement[]
+): Route[] => {
+  const props: Route[] = []
   Children.forEach(segments, (element) => {
-    const { label } = element.props
-    labels.push(label)
+    if (React.isValidElement(element)) {
+      const { id, title, icon, accessible, accessibilityLabel, testID } =
+        element.props
+      props.push({ id, title, icon, accessible, accessibilityLabel, testID })
+    }
   })
-  return labels
+  return props
 }
 
 export const CONTROL_HEIGHT = 48

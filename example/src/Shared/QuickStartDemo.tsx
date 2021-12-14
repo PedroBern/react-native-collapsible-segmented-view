@@ -12,10 +12,10 @@ const Header = () => {
 
 const Example: React.FC = () => {
   return (
-    <Segmented.View header={Header}>
-      <Segmented.Segment label="A" component={SegmentA} />
-      <Segmented.Segment label="B" component={SegmentB} />
-      <Segmented.Segment label="C" component={SegmentC} />
+    <Segmented.View renderHeader={Header}>
+      <Segmented.Segment id="A" title="A" component={SegmentA} />
+      <Segmented.Segment id="B" title="B" component={SegmentB} />
+      <Segmented.Segment id="C" title="C" component={SegmentC} />
     </Segmented.View>
   )
 }

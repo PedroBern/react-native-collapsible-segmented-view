@@ -1,7 +1,7 @@
 import React from 'react'
 import { Animated } from 'react-native'
 
-import { ScrollRef, SetIndex } from './types'
+import { ScrollRef, SyncScene } from './types'
 
 export type SegmentedViewContextType = {
   contentInset: number
@@ -13,10 +13,12 @@ export type SegmentedViewContextType = {
   lazy: boolean
   index: Animated.Value
   initialIndex: number
-  setIndex: SetIndex
+  syncScene: SyncScene
   prevIndex: React.MutableRefObject<number>
   trackIndex: React.MutableRefObject<number>
   translateY: Animated.AnimatedInterpolation
+  onTabPress: (nextIndex: number) => void
+  onMomentum: React.MutableRefObject<boolean>
 }
 
 export const SegmentedViewContext = React.createContext<

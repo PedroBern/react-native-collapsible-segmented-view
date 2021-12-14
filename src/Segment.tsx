@@ -4,9 +4,9 @@ import { Animated, StyleSheet } from 'react-native'
 import { useSegmentContext } from './SegmentContext'
 import { useSegmentedViewContext } from './SegmentedViewContext'
 import { spring } from './helpers'
+import { Route } from './types'
 
-type Props = {
-  label: string
+type Props = Route & {
   component:
     | (() => React.ReactElement)
     | React.FC<any>
@@ -20,21 +20,16 @@ export type SegmentReactElement = React.ReactElement<Props>
  *
  * ```tsx
  * <Segmented.View ...>
- *  <Segmented.Segment label="A" component={ScreenA} />
- *  <Segmented.Segment label="B" component={ScreenB} />
- *  <Segmented.Segment label="C" component={ScreenC} />
+ *  <Segmented.Segment id="A" component={ScreenA} />
+ *  <Segmented.Segment id="B" component={ScreenB} />
+ *  <Segmented.Segment id="C" component={ScreenC} />
  * </Segmented.Container>
  * ```
  */
 export const Segment = ({ component: Component }: Props) => {
-  const { opacity, zIndex, index: segmentIndex } = useSegmentContext()
-  const {
-    lazy,
-    setIndex,
-    initialIndex,
-    index,
-    prevIndex,
-  } = useSegmentedViewContext()
+  const { opacity, index: segmentIndex } = useSegmentContext()
+  const { lazy, syncScene, initialIndex, index, prevIndex } =
+    useSegmentedViewContext()
 
   const trackMount = React.useRef(lazy ? initialIndex === segmentIndex : true)
   const [wrapperOpacity] = React.useState(
@@ -62,13 +57,13 @@ export const Segment = ({ component: Component }: Props) => {
   React.useEffect(() => {
     if (mount && !trackMount.current) {
       trackMount.current = mount
-      setIndex(segmentIndex, prevIndex.current, true)
+      syncScene(segmentIndex, prevIndex.current)
       spring(wrapperOpacity, 1).start()
     }
-  }, [mount, prevIndex, segmentIndex, setIndex, wrapperOpacity])
+  }, [mount, prevIndex, segmentIndex, syncScene, wrapperOpacity])
 
   return (
-    <Animated.View style={[styles.scene, { opacity, zIndex }]}>
+    <Animated.View style={[styles.scene, { opacity }]}>
       <Animated.View style={[styles.wrapper, { opacity: wrapperOpacity }]}>
         {mount && <Component />}
       </Animated.View>

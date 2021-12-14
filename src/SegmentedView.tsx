@@ -7,20 +7,24 @@ import {
   LayoutChangeEvent,
   ViewStyle,
 } from 'react-native'
+import ViewPager, {
+  PagerViewOnPageSelectedEvent,
+  PageScrollStateChangedNativeEvent,
+} from 'react-native-pager-view'
 
-import { MaterialTabBar } from './MaterialTabBar'
+import { MaterialTabBar } from './ControlComponents/MaterialTabBar'
+// import { SegmentedControl } from './ControlComponents/SegmentedControl'
 import { SegmentReactElement } from './Segment'
 import { SegmentContext } from './SegmentContext'
-import { SegmentedControl } from './SegmentedControl'
 import { SegmentedViewContext } from './SegmentedViewContext'
 import {
   IS_IOS,
-  extractLabels,
   spring,
   CONTROL_HEIGHT,
   scrollTo,
+  extractSegmentRouteProps,
 } from './helpers'
-import { ControlProps, ScrollRef, SetIndex } from './types'
+import { ControlProps, ScrollRef } from './types'
 
 export type Props = {
   animatedValue?: Animated.Value
@@ -29,13 +33,16 @@ export type Props = {
   controlHeight?: number
   containerHeight?: number
   children: SegmentReactElement[]
-  header?: (props?: any) => JSX.Element
-  control?: (props: ControlProps) => JSX.Element
+  renderHeader?: () => React.ReactElement<any>
+  renderControl?: (props: ControlProps) => React.ReactElement<any>
   lazy?: boolean
   containerStyle?: ViewStyle
   topStyle?: ViewStyle
-  disableFadeIn?: boolean
+  keyboardDismissMode?: 'none' | 'on-drag' | 'auto'
+  swipeEnabled?: boolean
 }
+
+const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager)
 
 /**
  * Basic usage looks like this:
@@ -46,9 +53,9 @@ export type Props = {
  * const Example = () => {
  *   return (
  *     <Segmented.View hader={MyHeader}>
- *       <Segmented.Segment label="A" component={ScreenA} />
- *       <Segmented.Segment label="B" component={ScreenB} />
- *        <Segmented.Segment label="C" component={ScreenC} />
+ *       <Segmented.Segment id="A" component={ScreenA} />
+ *       <Segmented.Segment id="B" component={ScreenB} />
+ *        <Segmented.Segment id="C" component={ScreenC} />
  *     </Tabs.Container>
  *   )
  * }
@@ -61,22 +68,24 @@ export const SegmentedView: (props: Props) => JSX.Element = ({
   controlHeight = CONTROL_HEIGHT,
   containerHeight = 0,
   children,
-  header: HeaderComponent,
-  control: ControlComponent = IS_IOS ? SegmentedControl : MaterialTabBar,
+  renderHeader: HeaderComponent,
+  renderControl: ControlComponent = MaterialTabBar, //IS_IOS ? SegmentedControl : MaterialTabBar,
   lazy = false,
   containerStyle,
   topStyle,
-  disableFadeIn = false,
+  keyboardDismissMode,
+  swipeEnabled = true,
 }) => {
-  const [labels] = React.useState(extractLabels(children))
+  const routes = React.useMemo(
+    () => extractSegmentRouteProps(children),
+    [children]
+  )
   const refs = React.useRef<undefined[] | ScrollRef[]>(
-    labels.map(() => undefined)
+    routes.map(() => undefined)
   )
 
-  /**
-   * keep all heights on a single object insted of 3. This helps
-   * reduce the rerenders from to 3 to 1 after the first mount
-   */
+  // keep all heights on a single object insted of 3. This helps
+  // reduce the rerenders from to 3 to 1 after the first mount
   const [layoutHeights, setLayoutHeights] = React.useState({
     header: headerHeight || 0,
     control: controlHeight,
@@ -87,23 +96,26 @@ export const SegmentedView: (props: Props) => JSX.Element = ({
   const trackControlHeight = React.useRef(layoutHeights.control)
   const trackContainerHeight = React.useRef(layoutHeights.container)
 
-  /**
-   * used to fade in the content, after getting all
-   * layout heights, if headerHeight is undefined
-   */
+  // used to fade in the content, after getting all
+  // layout heights, if headerHeight is undefined
   const onLayoutCalls = React.useRef(0)
   const [scenesOpacity] = React.useState(
     new Animated.Value(headerHeight === undefined ? 0 : 1)
   )
 
+  const pagerRef = React.useRef<ViewPager>(null)
   const [index] = React.useState(new Animated.Value(initialIndex))
-  const [floatIndex] = React.useState(new Animated.Value(initialIndex))
   const trackIndex = React.useRef(initialIndex)
   const prevIndex = React.useRef(initialIndex)
-  const offsets = React.useRef(labels.map(() => -layoutHeights.contentInset))
+  const offsets = React.useRef(routes.map(() => -layoutHeights.contentInset))
   const [scrollY] = React.useState(
     animatedValue || new Animated.Value(-layoutHeights.contentInset)
   )
+  const [pagerIndex] = React.useState(new Animated.Value(initialIndex))
+  const [pagerOffset] = React.useState(new Animated.Value(0))
+  const [position] = React.useState(Animated.add(pagerIndex, pagerOffset))
+  const settlingTabPress = React.useRef(false)
+  const nextIndexAfterTabPress = React.useRef<number | undefined>(undefined)
 
   const translateY = React.useRef(
     scrollY.interpolate({
@@ -116,12 +128,11 @@ export const SegmentedView: (props: Props) => JSX.Element = ({
     })
   )
 
-  const [visibility] = React.useState(
-    labels.map((_, i) => ({
-      opacity: new Animated.Value(initialIndex === i ? 1 : 0),
-      zIndex: new Animated.Value(initialIndex === i ? 1 : 0),
-    }))
+  const onMomentum = React.useRef(false)
+  const [opacities] = React.useState(
+    routes.map((_, i) => new Animated.Value(initialIndex === i ? 1 : 0))
   )
+  const visibleScenes = React.useRef(routes.map((_, i) => initialIndex === i))
 
   const maybeTriggerRerenderAfterOnLayout = React.useCallback(() => {
     // layout calls = hedaer + control + container
@@ -223,10 +234,14 @@ export const SegmentedView: (props: Props) => JSX.Element = ({
     }
   }, [scrollY])
 
-  const setIndex = React.useCallback<SetIndex>(
-    (nextIndex, _currentIndex, _syncOnly) => {
+  const setRef = React.useCallback((ref: ScrollRef, index: number) => {
+    refs.current[index] = ref
+  }, [])
+
+  const syncScene = React.useCallback(
+    (nextIndex: number, _prevIndex?: number) => {
       const currentIndex =
-        _currentIndex === undefined ? trackIndex.current : _currentIndex
+        _prevIndex === undefined ? trackIndex.current : _prevIndex
       if (nextIndex !== currentIndex) {
         const currOffset = offsets.current[currentIndex]
         const nextOffset = offsets.current[nextIndex]
@@ -251,52 +266,114 @@ export const SegmentedView: (props: Props) => JSX.Element = ({
           offsets.current[nextIndex] = nextPosition
         }
 
-        // scroll to the top if is refrehing the current tab on iOS
-        // before changing tabs
+        // scroll to the top if is refrehing the
+        // current tab on iOS before changing tabs
         const isRefreshingOnIOS =
           IS_IOS && currOffset < -layoutHeights.contentInset
         if (isRefreshingOnIOS) {
           const ref = refs.current[currentIndex]?.current
-          ref && scrollTo(ref, -layoutHeights.contentInset)
+          ref && scrollTo(ref, -layoutHeights.contentInset, true)
         }
+        spring(opacities[nextIndex], 1).start()
+        visibleScenes.current[nextIndex] = true
+      }
+    },
+    [layoutHeights.contentInset, layoutHeights.header, opacities]
+  )
 
-        if (!_syncOnly) {
-          // show the next scene, and hide the current one
-          visibility[nextIndex].zIndex.setValue(2)
-          visibility[currentIndex].opacity.setValue(0)
-          visibility[currentIndex].zIndex.setValue(0)
-          if (disableFadeIn) {
-            visibility[nextIndex].opacity.setValue(1)
-            visibility[nextIndex].zIndex.setValue(1)
-          } else {
-            spring(visibility[nextIndex].opacity, 1).start(() => {
-              visibility[nextIndex].zIndex.setValue(1)
+  // we hide unfocused scenes to sync while it's hidden,
+  // preventing showing a gap before syncing had finished
+  const hideUnfocusedScenes = React.useCallback(
+    (nextIndex: number) => {
+      const oldIndex = trackIndex.current
+      if (nextIndex !== oldIndex) {
+        spring(opacities[oldIndex], 0).start()
+        trackIndex.current = nextIndex
+        prevIndex.current = oldIndex
+        visibleScenes.current[oldIndex] = false
+        // ScrollStateChanged event can make 2 screens visible,
+        // so we make sure to hide it
+        visibleScenes.current.forEach((visible, i) => {
+          if (i !== nextIndex && visible) {
+            opacities[i].setValue(0)
+            visibleScenes.current[i] = false
+          }
+        })
+      }
+    },
+    [opacities]
+  )
+
+  // sync the next scene as soon as it appears while swiping
+  const onPageScrollStateChanged = React.useCallback(
+    (state: PageScrollStateChangedNativeEvent) => {
+      if (!settlingTabPress.current) {
+        const { pageScrollState } = state.nativeEvent
+
+        switch (pageScrollState) {
+          case 'dragging': {
+            const subscription = pagerOffset.addListener(({ value }) => {
+              const next = trackIndex.current + (value > 0.5 ? -1 : 1)
+              if (
+                next !== trackIndex.current &&
+                next >= 0 &&
+                next < routes.length
+              ) {
+                syncScene(next)
+                visibleScenes.current[next] = true
+              }
+              pagerOffset.removeListener(subscription)
             })
           }
-
-          // update the mutable objects
-          trackIndex.current = nextIndex
-          prevIndex.current = currentIndex
-
-          // update the animated values
-          index.setValue(nextIndex)
-          spring(floatIndex, nextIndex).start()
         }
       }
     },
-    [
-      layoutHeights.header,
-      layoutHeights.contentInset,
-      visibility,
-      disableFadeIn,
-      index,
-      floatIndex,
-    ]
+    [routes.length, pagerOffset, syncScene]
   )
 
-  const setRef = React.useCallback((ref: ScrollRef, index: number) => {
-    refs.current[index] = ref
-  }, [])
+  const onPageSelected = React.useCallback(
+    (event: PagerViewOnPageSelectedEvent) => {
+      const nextIndex = event.nativeEvent.position
+      syncScene(nextIndex)
+      index.setValue(nextIndex)
+    },
+    [index, syncScene]
+  )
+
+  const onTabPress = React.useCallback(
+    (nextIndex: number) => {
+      // disable tab press on momentum scroll
+      // to prevent breaking sync logic
+      if (!onMomentum.current) {
+        pagerRef.current?.setScrollEnabled(false)
+        settlingTabPress.current = true
+        nextIndexAfterTabPress.current = nextIndex
+        syncScene(nextIndex)
+        index.setValue(nextIndex)
+        pagerRef.current?.setPageWithoutAnimation(nextIndex)
+        pagerOffset.setValue(nextIndex)
+        pagerRef.current?.setScrollEnabled(true)
+      }
+    },
+    [index, pagerOffset, syncScene]
+  )
+
+  React.useEffect(() => {
+    const listener = pagerOffset.addListener(({ value }) => {
+      if (
+        settlingTabPress.current === true &&
+        value === 0 &&
+        trackIndex.current === nextIndexAfterTabPress.current
+      ) {
+        settlingTabPress.current = false
+        nextIndexAfterTabPress.current = undefined
+      }
+    })
+
+    return () => {
+      pagerOffset.removeListener(listener)
+    }
+  }, [pagerOffset])
 
   return (
     <SegmentedViewContext.Provider
@@ -310,10 +387,12 @@ export const SegmentedView: (props: Props) => JSX.Element = ({
         lazy,
         index,
         initialIndex,
-        setIndex,
+        syncScene,
+        onTabPress,
         prevIndex,
         trackIndex,
         translateY: translateY.current,
+        onMomentum,
       }}
     >
       <View
@@ -335,20 +414,36 @@ export const SegmentedView: (props: Props) => JSX.Element = ({
           <View onLayout={onControlLayout} style={styles.control}>
             <ControlComponent
               index={index}
-              floatIndex={floatIndex}
-              setIndex={setIndex}
+              position={position}
+              onTabPress={onTabPress}
               initialIndex={initialIndex}
-              labels={labels}
+              routes={routes}
             />
           </View>
         </Animated.View>
-        <Animated.View style={[styles.scenes, { opacity: scenesOpacity }]}>
+        <AnimatedViewPager
+          ref={pagerRef}
+          initialPage={initialIndex}
+          style={[styles.container, { opacity: scenesOpacity }]}
+          keyboardDismissMode={
+            keyboardDismissMode === 'auto' ? 'on-drag' : keyboardDismissMode
+          }
+          onPageScroll={Animated.event(
+            [{ nativeEvent: { position: pagerIndex, offset: pagerOffset } }],
+            { useNativeDriver: true }
+          )}
+          onPageSelected={onPageSelected}
+          scrollEnabled={swipeEnabled}
+          onPageScrollStateChanged={onPageScrollStateChanged}
+        >
           {React.Children.map(children, (child, index) => (
-            <SegmentContext.Provider value={{ ...visibility[index], index }}>
+            <SegmentContext.Provider
+              value={{ opacity: opacities[index], index, hideUnfocusedScenes }}
+            >
               {child}
             </SegmentContext.Provider>
           ))}
-        </Animated.View>
+        </AnimatedViewPager>
       </View>
     </SegmentedViewContext.Provider>
   )
@@ -372,8 +467,5 @@ const styles = StyleSheet.create({
   control: {
     zIndex: 100,
     width: '100%',
-  },
-  scenes: {
-    flex: 1,
   },
 })
