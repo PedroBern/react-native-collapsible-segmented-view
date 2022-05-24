@@ -58,7 +58,7 @@ The [react-native-tab-view](https://github.com/satya164/react-native-tab-view) e
 Open a Terminal in the project root and run:
 
 ```sh
-yarn add react-native-collapsible-segmented-view
+yarn add react-native-collapsible-segmented-view @react-native-community/segmented-control
 
 expo install @react-native-community/segmented-control
 ```
